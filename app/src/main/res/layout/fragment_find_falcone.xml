@@ -4,6 +4,8 @@
 
     <data>
 
+        <import type="sourabh.pal.findfalcone.common.presentation.model.mappers.UiPlanetToStringMapper" />
+
         <variable
             name="viewModel"
             type="sourabh.pal.findfalcone.find.presentation.FindFalconeFragmentViewModel" />
@@ -11,7 +13,6 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp">
@@ -30,8 +31,52 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
 
-        <include layout="@layout/dropdown_widget"
-            app:viewModel="@{viewModel}"/>
+        <include
+            android:id="@+id/dropdown_widget1"
+            layout="@layout/dropdown_widget"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            app:items="@{UiPlanetToStringMapper.INSTANCE.mapToView(viewModel.state.planets)}"
+            app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <include
+            android:id="@+id/dropdown_widget2"
+            layout="@layout/dropdown_widget"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            app:items="@{UiPlanetToStringMapper.INSTANCE.mapToView(viewModel.state.planets)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/vertical_guideline"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/dropdown_widget3"
+            layout="@layout/dropdown_widget"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:items="@{UiPlanetToStringMapper.INSTANCE.mapToView(viewModel.state.planets)}"
+            app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
+
+        <include
+            android:id="@+id/dropdown_widget4"
+            layout="@layout/dropdown_widget"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:items="@{UiPlanetToStringMapper.INSTANCE.mapToView(viewModel.state.planets)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -7,22 +7,33 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="sourabh.pal.findfaldone.FirstFragment"
+        android:name="sourabh.pal.findfalcone.FirstFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_FirstFragment_to_FindFalconeFragment"
+            app:destination="@id/FindFalconeFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="sourabh.pal.findfaldone.SecondFragment"
+        android:name="sourabh.pal.findfalcone.SecondFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_second">
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FindFalconeFragment"
+        android:name="sourabh.pal.findfalcone.find.presentation.FindFalconeFragment"
+        android:label="@string/find_falcone_fragment_label"
+        tools:layout="@layout/fragment_find_falcone">
+
+        <action
+            android:id="@+id/action_FindFalconeFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
 </navigation>
