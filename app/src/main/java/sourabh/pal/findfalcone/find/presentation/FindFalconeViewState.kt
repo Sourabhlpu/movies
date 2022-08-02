@@ -13,5 +13,6 @@ data class FindFalconeViewState(
         UIPlanet("Lerbin", 234),
         UIPlanet("Pingasor",234)
     ),
+    val planetsName: List<String> = planets.filter { !it.isSelected }.map { it.name },
     val failure: Event<Throwable>? = null
 )
