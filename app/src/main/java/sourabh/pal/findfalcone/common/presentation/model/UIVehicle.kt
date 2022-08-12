@@ -5,5 +5,8 @@ data class UIVehicle(
     val quantity: Int,
     val range: Int,
     val speed: Int,
-    val enable: Boolean = true
+    val selectedQuantity: Int = 0,
+    val enable: Boolean = selectedQuantity < quantity,
+    val isSelected: Boolean = false,
+    val remainingQuantity: Int = quantity
 )

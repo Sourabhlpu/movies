@@ -10,10 +10,10 @@ data class FindFalconeViewState(
     val planets: List<UIPlanet> = listOf(
         UIPlanet("Donlon", 100),
         UIPlanet("Enchai", 234),
-        UIPlanet("Jebing", 234),
-        UIPlanet("Sapir", 234),
-        UIPlanet("Lerbin", 234),
-        UIPlanet("Pingasor",234)
+        UIPlanet("Jebing", 334),
+        UIPlanet("Sapir", 434),
+        UIPlanet("Lerbin", 534),
+        UIPlanet("Pingasor",580)
     ),
     val vehicles: List<UIVehicle> = listOf(
         UIVehicle("Space pod", 2, 200,2),
@@ -21,7 +21,7 @@ data class FindFalconeViewState(
         UIVehicle("Space shuttle", 1, 400,5),
         UIVehicle("Space ship", 2, 600,10)
     ),
-    val vehiclesForSelectedPlanet: VehiclesForPlanet = VehiclesForPlanet(),
+    val vehiclesForSelectedPlanet: VehiclesForPlanet = VehiclesForPlanet(vehicles = vehicles),
     val failure: Event<Throwable>? = null
 ){
     val numberOfSelectedPlanets get() = planets.filter { it.isSelected }.size

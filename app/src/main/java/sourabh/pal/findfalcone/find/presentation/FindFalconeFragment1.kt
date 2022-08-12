@@ -7,14 +7,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager2.widget.MarginPageTransformer
-import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import sourabh.pal.findfalcone.R
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
 import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
+import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
 import sourabh.pal.findfalcone.databinding.FragmentFindFalcone1Binding
 
 
@@ -41,10 +40,24 @@ class FindFalconeFragment1 : Fragment() {
     }
 
     private fun setupUI() {
+        setBindings()
+        val viewPagerAdapter = createViewPagerAdapter()
+        val vehiclesAdapter = createVehiclesAdapter()
+        setViewPager(viewPagerAdapter)
+        setRecyclerView(vehiclesAdapter)
+        observerViewStateUpdates(vehiclesAdapter)
+    }
+
+    private fun setBindings() {
         binding.viewModel = viewModel
-        val adapter = createAdapter()
-        setViewPager(adapter)
-        observerViewStateUpdates()
+    }
+
+    private fun setRecyclerView(vehiclesAdapter: VehiclesAdapter) {
+        binding.rvPlanets.apply {
+            adapter = vehiclesAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+        }
     }
 
     private fun setViewPager(vpAdapter: ScreenSlidePagerAdapter) {
@@ -55,19 +68,23 @@ class FindFalconeFragment1 : Fragment() {
 
     }
 
-    private fun createAdapter(): ScreenSlidePagerAdapter {
+    private fun createViewPagerAdapter(): ScreenSlidePagerAdapter {
         return ScreenSlidePagerAdapter(this)
     }
 
-    private fun observerViewStateUpdates() {
+    private fun createVehiclesAdapter(): VehiclesAdapter {
+        return VehiclesAdapter()
+    }
+
+    private fun observerViewStateUpdates(vehiclesAdapter: VehiclesAdapter) {
         viewModel.state.observe(viewLifecycleOwner) {
-            updateScreen(it)
+            updateScreen(it, vehiclesAdapter)
             handleFailures(it.failure)
         }
     }
 
-    private fun updateScreen(state: FindFalconeViewState) {
-
+    private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
+        vehiclesAdapter.submitList(state.vehiclesForSelectedPlanet.usableVehiclesForPlanet)
     }
 
     private fun handleFailures(failure: Event<Throwable>?) {

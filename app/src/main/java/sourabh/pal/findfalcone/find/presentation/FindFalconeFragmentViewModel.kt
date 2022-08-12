@@ -37,8 +37,10 @@ class FindFalconeFragmentViewModel : ViewModel() {
             )
         } else {
             val planetsUpdated = getPlanetsListAfterSelection(isSelected, selectedIndex)
+            val vehicles = state.value!!.vehicles
             _state.value = currentState?.copy(
-                planets = planetsUpdated
+                planets = planetsUpdated,
+                vehiclesForSelectedPlanet = VehiclesForPlanet(planetsUpdated[selectedIndex], vehicles)
             )
         }
     }
