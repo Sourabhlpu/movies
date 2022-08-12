@@ -5,7 +5,10 @@
       <map>
         <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/dropdown_item.xml" value="0.15341880341880343" />
         <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/dropdown_widget.xml" value="0.18802083333333333" />
-        <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/fragment_find_falcone.xml" value="0.14666666666666667" />
+        <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/fragment_find_falcone.xml" value="0.1" />
+        <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/fragment_find_falcone1.xml" value="0.18697916666666667" />
+        <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/fragment_planet_slide_page.xml" value="0.18697916666666667" />
+        <entry key="..\:/android_projects/findfalcone/app/src/main/res/layout/radio_group_widget.xml" value="0.1" />
       </map>
     </option>
   </component>

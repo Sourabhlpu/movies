@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -20,7 +21,6 @@ class FindFalconeFragment : Fragment() {
 
     private val binding get() = _binding!!
     private var _binding: FragmentFindFalconeBinding? = null
-
     private val viewModel: FindFalconeFragmentViewModel by viewModels()
 
 
@@ -56,10 +56,18 @@ class FindFalconeFragment : Fragment() {
 
     private fun updateScreen(state: FindFalconeViewState) {
         updateDropdownList(state)
+        showRadioGroup(state)
+    }
+
+    private fun showRadioGroup(state: FindFalconeViewState) {
+        binding.radioGroupWidget1.radioGroup.isVisible = state.showRadioGroup1
+        binding.radioGroupWidget2.radioGroup.isVisible = state.showRadioGroup2
+        binding.radioGroupWidget3.radioGroup.isVisible = state.showRadioGroup3
+        binding.radioGroupWidget4.radioGroup.isVisible = state.showRadioGroup4
     }
 
     private fun updateDropdownList(state: FindFalconeViewState) {
-        val adapter = binding.dropdownWidget1.autoCompleteTextView.adapter
+        val adapter = binding.dropdownWidget3.autoCompleteTextView.adapter
         adapter?.let {
             (adapter as ArrayAdapter<String>)
                 .apply {

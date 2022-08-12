@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
+import sourabh.pal.findfalcone.common.presentation.model.VehiclesForPlanet
 
 class FindFalconeFragmentViewModel : ViewModel() {
 
@@ -27,7 +28,11 @@ class FindFalconeFragmentViewModel : ViewModel() {
         val planetsUpdated = getPlanetsListAfterSelection(planet, selectedIndex)
         _state.value = _state.value?.copy(
             planets = planetsUpdated,
-            planetsName = planetsUpdated.filter { !it.isSelected }.map { it.name }
+            planetsName = planetsUpdated.filter { !it.isSelected }.map { it.name },
+            showRadioGroup1 = planetsUpdated.find { it.selectedIndex == 0 } != null,
+            showRadioGroup2 = planetsUpdated.find { it.selectedIndex == 1 } != null,
+            showRadioGroup3 = planetsUpdated.find { it.selectedIndex == 2 } != null,
+            showRadioGroup4 = planetsUpdated.find { it.selectedIndex == 3 } != null
         )
     }
 

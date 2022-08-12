@@ -14,6 +14,10 @@
         <action
             android:id="@+id/action_FirstFragment_to_FindFalconeFragment"
             app:destination="@id/FindFalconeFragment" />
+
+        <action
+            android:id="@+id/action_FirstFragment_to_FindFalconeFragment1"
+            app:destination="@id/FindFalconeFragment1" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -34,6 +38,17 @@
 
         <action
             android:id="@+id/action_FindFalconeFragment_to_FirstFragment"
+            app:destination="@id/FirstFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/FindFalconeFragment1"
+        android:name="sourabh.pal.findfalcone.find.presentation.FindFalconeFragment1"
+        android:label="@string/find_falcone_fragment_label"
+        tools:layout="@layout/fragment_find_falcone1">
+
+        <action
+            android:id="@+id/action_FindFalconeFragment_to_FirstFragment1"
             app:destination="@id/FirstFragment" />
     </fragment>
 </navigation>

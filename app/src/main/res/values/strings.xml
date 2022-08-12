@@ -11,4 +11,5 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="select">select</string>
+    <string name="format_radio_title" translatable="false">%1$s (%2$d)</string>
 </resources>
