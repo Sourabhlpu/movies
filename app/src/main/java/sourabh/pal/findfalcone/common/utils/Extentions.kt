@@ -1,5 +1,6 @@
 package sourabh.pal.findfalcone.common.utils
 
+import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -14,3 +15,6 @@ fun AutoCompleteTextView.setAdapter(items: List<String>) {
     setAdapter(adapter)
 }
 
+fun Int.dpToPx(displayMetrics: DisplayMetrics): Int = (this * displayMetrics.density).toInt()
+
+fun Int.pxToDp(displayMetrics: DisplayMetrics): Int = (this / displayMetrics.density).toInt()

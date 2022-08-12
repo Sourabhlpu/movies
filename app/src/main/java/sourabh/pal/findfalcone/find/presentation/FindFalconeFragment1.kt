@@ -7,8 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
 import sourabh.pal.findfalcone.R
+import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
+import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
 import sourabh.pal.findfalcone.databinding.FragmentFindFalcone1Binding
 
 
@@ -41,8 +47,12 @@ class FindFalconeFragment1 : Fragment() {
         observerViewStateUpdates()
     }
 
-    private fun setViewPager(adapter: ScreenSlidePagerAdapter) {
-        binding.pager.adapter = adapter
+    private fun setViewPager(vpAdapter: ScreenSlidePagerAdapter) {
+        binding.pager.apply {
+            adapter = vpAdapter
+            setPageTransformer(ZoomOutPageTransformer())
+        }
+
     }
 
     private fun createAdapter(): ScreenSlidePagerAdapter {
@@ -52,13 +62,29 @@ class FindFalconeFragment1 : Fragment() {
     private fun observerViewStateUpdates() {
         viewModel.state.observe(viewLifecycleOwner) {
             updateScreen(it)
+            handleFailures(it.failure)
         }
     }
 
     private fun updateScreen(state: FindFalconeViewState) {
 
     }
-    
+
+    private fun handleFailures(failure: Event<Throwable>?) {
+        val unhandledFailure = failure?.getContentIfNotHandled() ?: return
+
+        val fallbackMessage = getString(R.string.an_error_occurred)
+
+        val snackbarMessage = if (unhandledFailure.message.isNullOrEmpty()) {
+            fallbackMessage
+        } else {
+            unhandledFailure.message!!
+        }
+        if (snackbarMessage.isNotEmpty()) {
+            Snackbar.make(requireView(), snackbarMessage, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

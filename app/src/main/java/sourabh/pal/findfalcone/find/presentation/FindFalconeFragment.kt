@@ -41,10 +41,6 @@ class FindFalconeFragment : Fragment() {
 
     private fun setupUI() {
         binding.viewModel = viewModel
-        setDropDownListeners(binding.dropdownWidget1.autoCompleteTextView, 0)
-        setDropDownListeners(binding.dropdownWidget2.autoCompleteTextView, 1)
-        setDropDownListeners(binding.dropdownWidget3.autoCompleteTextView, 2)
-        setDropDownListeners(binding.dropdownWidget4.autoCompleteTextView, 3)
         observerViewStateUpdates()
     }
 
@@ -55,38 +51,11 @@ class FindFalconeFragment : Fragment() {
     }
 
     private fun updateScreen(state: FindFalconeViewState) {
-        updateDropdownList(state)
-        showRadioGroup(state)
+
+
     }
 
-    private fun showRadioGroup(state: FindFalconeViewState) {
-        binding.radioGroupWidget1.radioGroup.isVisible = state.showRadioGroup1
-        binding.radioGroupWidget2.radioGroup.isVisible = state.showRadioGroup2
-        binding.radioGroupWidget3.radioGroup.isVisible = state.showRadioGroup3
-        binding.radioGroupWidget4.radioGroup.isVisible = state.showRadioGroup4
-    }
 
-    private fun updateDropdownList(state: FindFalconeViewState) {
-        val adapter = binding.dropdownWidget3.autoCompleteTextView.adapter
-        adapter?.let {
-            (adapter as ArrayAdapter<String>)
-                .apply {
-                    clear()
-                    addAll(state.planetsName)
-                }
-        }
-    }
-
-    private fun setDropDownListeners(dropDown: AutoCompleteTextView, dropdownIndex: Int) {
-        dropDown.doOnTextChanged { text, _, _, _ ->
-            viewModel.onEvent(
-                FindFalconeEvent.PlanetSelected(
-                    text.toString(),
-                    dropdownIndex
-                )
-            )
-        }
-    }
 
 
     override fun onDestroy() {

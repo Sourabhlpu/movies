@@ -32,7 +32,7 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
 
-        <include
+       <!-- <include
             android:id="@+id/dropdown_widget1"
             layout="@layout/dropdown_widget"
             android:layout_width="0dp"
@@ -41,18 +41,18 @@
             app:items="@{viewModel.state.planetsName}"
             app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <include
+        <!--<include
             android:id="@+id/radio_group_widget1"
             layout="@layout/radio_group_widget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/dropdown_widget1"
-            app:vehicles="@{viewModel.state.vehicles}"/>
+            app:vehicles="@{viewModel.state.vehicles}"/>-->
 
-        <include
+<!--        <include
             android:id="@+id/dropdown_widget2"
             layout="@layout/dropdown_widget"
             android:layout_width="0dp"
@@ -61,9 +61,9 @@
             app:items="@{viewModel.state.planetsName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <include
+<!--        <include
             android:id="@+id/radio_group_widget2"
             layout="@layout/radio_group_widget"
             android:layout_width="wrap_content"
@@ -72,9 +72,9 @@
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toEndOf="@id/vertical_guideline"
             app:layout_constraintTop_toBottomOf="@id/dropdown_widget2"
-            app:vehicles="@{viewModel.state.vehicles}"/>
+            app:vehicles="@{viewModel.state.vehicles}"/>-->
 
-        <include
+<!--        <include
             android:id="@+id/dropdown_widget3"
             layout="@layout/dropdown_widget"
             android:layout_width="0dp"
@@ -84,18 +84,18 @@
             app:items="@{viewModel.state.planetsName}"
             app:layout_constraintEnd_toStartOf="@id/vertical_guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
+            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />-->
 
-        <include
+<!--        <include
             android:id="@+id/radio_group_widget3"
             layout="@layout/radio_group_widget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/dropdown_widget3"
-            app:vehicles="@{viewModel.state.vehicles}"/>
+            app:vehicles="@{viewModel.state.vehicles}"/>-->
 
-        <include
+<!--        <include
             android:id="@+id/dropdown_widget4"
             layout="@layout/dropdown_widget"
             android:layout_width="0dp"
@@ -105,9 +105,9 @@
             app:items="@{viewModel.state.planetsName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/vertical_guideline"
-            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />
+            app:layout_constraintTop_toBottomOf="@id/horizontal_guideline" />-->
 
-        <include
+<!--        <include
             android:id="@+id/radio_group_widget4"
             layout="@layout/radio_group_widget"
             android:layout_width="wrap_content"
@@ -116,7 +116,7 @@
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toEndOf="@id/vertical_guideline"
             app:layout_constraintTop_toBottomOf="@id/dropdown_widget4"
-            app:vehicles="@{viewModel.state.vehicles}"/>
+            app:vehicles="@{viewModel.state.vehicles}"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
