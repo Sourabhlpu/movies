@@ -7,6 +7,12 @@ data class UIVehicle(
     val speed: Int,
     val selectedQuantity: Int = 0,
     val enable: Boolean = selectedQuantity < quantity,
-    val isSelected: Boolean = false,
-    val remainingQuantity: Int = quantity
-)
+    val remainingQuantity: Int = quantity,
+    var isSelected: Boolean = false,
+    val selectedFor: List<UIPlanet> = emptyList()
+){
+    fun isSelected(currentPlanet: UIPlanet): Boolean{
+        isSelected = selectedFor.contains(currentPlanet)
+        return isSelected
+    }
+}

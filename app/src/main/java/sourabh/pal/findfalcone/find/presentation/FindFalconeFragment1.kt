@@ -4,16 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import sourabh.pal.findfalcone.R
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
 import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
 import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.databinding.FragmentFindFalcone1Binding
 
 
@@ -48,6 +51,10 @@ class FindFalconeFragment1 : Fragment() {
         observerViewStateUpdates(vehiclesAdapter)
     }
 
+    fun onVehicleClicked(vehicle: UIVehicle){
+      viewModel.onEvent(FindFalconeEvent.OnPlanetClicked(vehicle))
+    }
+
     private fun setBindings() {
         binding.viewModel = viewModel
     }
@@ -61,6 +68,12 @@ class FindFalconeFragment1 : Fragment() {
     }
 
     private fun setViewPager(vpAdapter: ScreenSlidePagerAdapter) {
+        binding.pager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewModel.onEvent(FindFalconeEvent.OnPageSelected(position))
+            }
+        })
         binding.pager.apply {
             adapter = vpAdapter
             setPageTransformer(ZoomOutPageTransformer())
@@ -73,7 +86,7 @@ class FindFalconeFragment1 : Fragment() {
     }
 
     private fun createVehiclesAdapter(): VehiclesAdapter {
-        return VehiclesAdapter()
+        return VehiclesAdapter(this)
     }
 
     private fun observerViewStateUpdates(vehiclesAdapter: VehiclesAdapter) {
@@ -85,6 +98,7 @@ class FindFalconeFragment1 : Fragment() {
 
     private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
         vehiclesAdapter.submitList(state.vehiclesForSelectedPlanet.usableVehiclesForPlanet)
+        binding.rvPlanets.isVisible = state.showVehicles
     }
 
     private fun handleFailures(failure: Event<Throwable>?) {

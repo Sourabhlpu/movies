@@ -7,7 +7,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 
-abstract class BaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>) :
+abstract class BaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>, private val clickHandler: Any) :
     ListAdapter<T, BaseViewHolder<T>>(diffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T> {
@@ -16,5 +16,5 @@ abstract class BaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>) :
         return BaseViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: BaseViewHolder<T>, position: Int) = holder.bind(getItem(position))
+    override fun onBindViewHolder(holder: BaseViewHolder<T>, position: Int) = holder.bind(getItem(position), clickHandler)
 }
