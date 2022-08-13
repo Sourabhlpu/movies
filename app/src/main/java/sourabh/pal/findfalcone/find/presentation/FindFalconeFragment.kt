@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import sourabh.pal.findfalcone.R
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
@@ -20,6 +21,7 @@ import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.databinding.FragmentFindFalcone1Binding
 
 
+@AndroidEntryPoint
 class FindFalconeFragment : Fragment() {
 
     private val binding get() = _binding!!
