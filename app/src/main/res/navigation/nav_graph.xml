@@ -30,7 +30,7 @@
         android:id="@+id/FindFalconeFragment1"
         android:name="sourabh.pal.findfalcone.find.presentation.FindFalconeFragment"
         android:label="@string/find_falcone_fragment_label"
-        tools:layout="@layout/fragment_find_falcone1">
+        tools:layout="@layout/fragment_find_falcone">
 
         <action
             android:id="@+id/action_FindFalconeFragment_to_FirstFragment1"

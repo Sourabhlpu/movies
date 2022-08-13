@@ -20,14 +20,14 @@ class FindFalconeRepositoryIml @Inject constructor(
     override suspend fun getAllVehicles(): List<Vehicle> {
         return withContext(ioDispatcher.io()) {
             val apiVehicles = api.getAllVehicles()
-            apiVehicles.vehicles?.map { apiVehicleMapper.mapToDomain(it) }.orEmpty()
+            apiVehicles.map { apiVehicleMapper.mapToDomain(it) }
         }
     }
 
     override suspend fun getAllPlanets(): List<Planet> {
         return withContext(ioDispatcher.io()) {
             val apiPlanets = api.getAllPlanets()
-            apiPlanets.planets?.map { apiPlanetMapper.mapToDomain(it) }.orEmpty()
+            apiPlanets.map { apiPlanetMapper.mapToDomain(it) }
         }
     }
 }

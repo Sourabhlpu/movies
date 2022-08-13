@@ -18,14 +18,14 @@ import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
 import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
 import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
-import sourabh.pal.findfalcone.databinding.FragmentFindFalcone1Binding
+import sourabh.pal.findfalcone.databinding.FragmentFindFalconeBinding
 
 
 @AndroidEntryPoint
 class FindFalconeFragment : Fragment() {
 
     private val binding get() = _binding!!
-    private var _binding: FragmentFindFalcone1Binding? = null
+    private var _binding: FragmentFindFalconeBinding? = null
     private val viewModel: FindFalconeFragmentViewModel by viewModels()
 
 
@@ -35,13 +35,18 @@ class FindFalconeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_find_falcone1, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.fragment_find_falcone, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUI()
+        requestInitialData()
+    }
+
+    private fun requestInitialData() {
+        viewModel.onEvent(FindFalconeEvent.GetPlanetsAndVehicles)
     }
 
     private fun setupUI() {
@@ -101,6 +106,7 @@ class FindFalconeFragment : Fragment() {
     private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
         vehiclesAdapter.submitList(state.vehiclesForSelectedPlanet.usableVehiclesForPlanet)
         binding.rvPlanets.isVisible = state.showVehicles
+        binding.loader.isVisible = state.loading
     }
 
     private fun handleFailures(failure: Event<Throwable>?) {

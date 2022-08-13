@@ -3,8 +3,12 @@ package sourabh.pal.findfalcone.find.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
+import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 import javax.inject.Inject
@@ -14,8 +18,10 @@ private const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 
 @HiltViewModel
 class FindFalconeFragmentViewModel @Inject constructor(
-    getPlanets: GetPlanets,
-    getVehicles: GetVehicles
+    private val getPlanets: GetPlanets,
+    private val getVehicles: GetVehicles,
+    private val uiPlanetMapper: UIPlanetMapper,
+    private val uiVehicleMapper: UIVehicleMapper
 ) : ViewModel() {
 
     val state: LiveData<FindFalconeViewState> get() = _state
@@ -34,9 +40,32 @@ class FindFalconeFragmentViewModel @Inject constructor(
                 event.selectedIndex
             )
             is FindFalconeEvent.OnPageSelected -> updateSelectedPageIndex(event.position)
-            FindFalconeEvent.GetPlanetsAndVehicles -> TODO()
+            FindFalconeEvent.GetPlanetsAndVehicles -> loadInitialData()
             FindFalconeEvent.Submit -> TODO()
             is FindFalconeEvent.OnPlanetClicked -> updateVehicheSelection(event.vehicle)
+        }
+    }
+
+    private fun loadInitialData() {
+        loadAllVehicles()
+        loadAllPlanets()
+    }
+
+    private fun loadAllVehicles() {
+        _state.value = state.value?.copy(loading = true)
+        viewModelScope.launch {
+            val vehicles = getVehicles()
+            val uiVehicles = vehicles.map { uiVehicleMapper.mapToView(it) }
+            _state.value = state.value?.copy(loading = false, vehicles = uiVehicles)
+        }
+    }
+
+    private fun loadAllPlanets() {
+        _state.value = state.value?.copy(loading = true)
+        viewModelScope.launch {
+            val planets = getPlanets()
+            val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
+            _state.value = state.value?.copy(loading = false, planets = uiPlanets)
         }
     }
 

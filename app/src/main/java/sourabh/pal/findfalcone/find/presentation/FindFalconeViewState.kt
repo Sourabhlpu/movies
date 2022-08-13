@@ -7,21 +7,21 @@ import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.VehiclesForPlanet
 
 data class FindFalconeViewState(
-    val loading: Boolean = true,
-    val planets: List<UIPlanet> = listOf(
+    val loading: Boolean = false,
+    val planets: List<UIPlanet> = emptyList() /*listOf(
         UIPlanet("Donlon", 100),
         UIPlanet("Enchai", 234),
         UIPlanet("Jebing", 334),
         UIPlanet("Sapir", 434),
         UIPlanet("Lerbin", 534),
         UIPlanet("Pingasor", 580)
-    ),
-    val vehicles: List<UIVehicle> = listOf(
+    )*/,
+    val vehicles: List<UIVehicle> = emptyList() /*listOf(
         UIVehicle("Space pod", 2, 200, 2),
         UIVehicle("Space rocket", 1, 300, 4),
         UIVehicle("Space shuttle", 1, 400, 5),
         UIVehicle("Space ship", 2, 600, 10)
-    ),
+    )*/,
     val vehiclesForSelectedPlanet: VehiclesForPlanet = VehiclesForPlanet(vehicles = vehicles),
     val showVehicles: Boolean = false,
     val selectedVehicleForPlanet: List<Pair<UIPlanet, UIVehicle>> = emptyList(),
@@ -30,6 +30,8 @@ data class FindFalconeViewState(
     val numberOfSelectedPlanets get() = planets.filter { it.isSelected }.size
 
     fun updateWhenPlanetsPageChanged(currentPage: Int): FindFalconeViewState {
+        if(planets.isEmpty())
+            return this
         val currentPlanet = planets[currentPage]
         val updatedVehicles =
             vehicles.map {

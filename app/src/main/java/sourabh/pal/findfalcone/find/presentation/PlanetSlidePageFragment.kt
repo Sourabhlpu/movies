@@ -46,8 +46,10 @@ class PlanetSlidePageFragment(private val position: Int) : Fragment() {
 
     private fun observerViewStateUpdates() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            binding.planetName = state.planets.map { it.name }[position]
-            binding.card.isChecked = state.planets[position].isSelected
+            if(state.planets.isNotEmpty()){
+                binding.planetName = state.planets.map { it.name }[position]
+                binding.card.isChecked = state.planets[position].isSelected
+            }
         }
     }
 
