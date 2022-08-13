@@ -6,7 +6,7 @@ data class VehiclesForPlanet(
 ){
     val usableVehiclesForPlanet: List<UIVehicle> get() {
         return vehicles.map {
-            if(it.range >= planet.distance)
+            if(it.range >= planet.distance && (it.remainingQuantity > 0 || it.isSelected))
                 it
             else
                 it.copy(enable = false)

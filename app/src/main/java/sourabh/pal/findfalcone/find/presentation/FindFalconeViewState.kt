@@ -32,12 +32,16 @@ data class FindFalconeViewState(
     fun updateWhenPlanetsPageChanged(currentPage: Int): FindFalconeViewState {
         val currentPlanet = planets[currentPage]
         val updatedVehicles =
-            vehicles.map { if (it.selectedFor.contains(currentPlanet)) it.copy(isSelected = true) else it.copy(isSelected = false) }
+            vehicles.map {
+                if (it.selectedFor.contains(currentPlanet)) it.copy(isSelected = true) else it.copy(
+                    isSelected = false
+                )
+            }
         return copy(
             showVehicles = currentPlanet.isSelected,
             vehiclesForSelectedPlanet = VehiclesForPlanet(currentPlanet, updatedVehicles),
             vehicles = updatedVehicles
-            )
+        )
     }
 
     fun updateToAllPlanetsSelected(): FindFalconeViewState {
@@ -55,11 +59,18 @@ data class FindFalconeViewState(
         )
     }
 
-    fun updateToVehicleSelected(currentSelectedPlanetsPage: Int, vehicle: UIVehicle): FindFalconeViewState{
+    fun updateToVehicleSelected(
+        currentSelectedPlanetsPage: Int,
+        vehicle: UIVehicle
+    ): FindFalconeViewState {
+
         val updatedVehicles = getUpdatedVehiclesList(currentSelectedPlanetsPage, vehicle)
         return copy(
             vehicles = updatedVehicles,
-            vehiclesForSelectedPlanet = VehiclesForPlanet(vehicles = updatedVehicles)
+            vehiclesForSelectedPlanet = VehiclesForPlanet(
+                planets[currentSelectedPlanetsPage],
+                vehicles = updatedVehicles
+            )
         )
     }
 
@@ -67,10 +78,14 @@ data class FindFalconeViewState(
         currentSelectedPlanetsPage: Int,
         vehicle: UIVehicle
     ): List<UIVehicle> {
+
         val currentSelectedPlanet = planets[currentSelectedPlanetsPage]
         val isVehicleSelectedForPlanet = !vehicle.isSelected(currentSelectedPlanet)
         val updatedVehicle = vehicle.copy(
-            remainingQuantity = getRemainingQuantityForVehicle(currentSelectedPlanetsPage, vehicle),
+            remainingQuantity = getRemainingQuantityForVehicle(
+                currentSelectedPlanetsPage,
+                vehicle
+            ).coerceAtLeast(0),
             isSelected = isVehicleSelectedForPlanet,
             selectedFor = getPlanetsSelectedForVehicle(
                 vehicle,
