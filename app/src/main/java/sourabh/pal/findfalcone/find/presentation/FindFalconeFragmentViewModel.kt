@@ -5,13 +5,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
+import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 import javax.inject.Inject
 
 
 private const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 
 @HiltViewModel
-class FindFalconeFragmentViewModel @Inject constructor() : ViewModel() {
+class FindFalconeFragmentViewModel @Inject constructor(
+    getPlanets: GetPlanets,
+    getVehicles: GetVehicles
+) : ViewModel() {
 
     val state: LiveData<FindFalconeViewState> get() = _state
     private val _state = MutableLiveData<FindFalconeViewState>()

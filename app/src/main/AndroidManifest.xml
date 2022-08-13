@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="sourabh.pal.findfalcone">
 
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+
+
     <application
         android:name=".FindFalconeApplication"
         android:allowBackup="false"

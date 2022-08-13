@@ -7,6 +7,6 @@ data class Vehicles(
 data class Vehicle(
     val name: String,
     val quantity: Int,
-    val maxDistance: Int,
+    val range: Int,
     val speed: Int
 )

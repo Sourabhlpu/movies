@@ -8,7 +8,7 @@ data class VehicleForPlanet(
     val planet: Planet
 ){
     private val canReachPlanet
-    get() = vehicle.maxDistance >= planet.distance
+    get() = vehicle.range >= planet.distance
 
     fun timeToReachPlanet(): Int {
         check(canReachPlanet)

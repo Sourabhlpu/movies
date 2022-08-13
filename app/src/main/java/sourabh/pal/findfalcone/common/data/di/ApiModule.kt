@@ -50,4 +50,5 @@ object ApiModule {
         interceptor.level = HttpLoggingInterceptor.Level.BODY
         return interceptor
     }
+
 }
