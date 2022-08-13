@@ -3,9 +3,7 @@ package sourabh.pal.findfalcone.find.presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
-import sourabh.pal.findfalcone.common.presentation.model.VehiclesForPlanet
 
 
 private const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4

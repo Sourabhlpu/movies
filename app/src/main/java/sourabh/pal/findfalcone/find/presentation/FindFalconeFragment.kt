@@ -1,26 +1,29 @@
 package sourabh.pal.findfalcone.find.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.snackbar.Snackbar
 import sourabh.pal.findfalcone.R
-import sourabh.pal.findfalcone.databinding.FragmentFindFalconeBinding
+import sourabh.pal.findfalcone.common.presentation.Event
+import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
+import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
+import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.databinding.FragmentFindFalcone1Binding
 
 
 class FindFalconeFragment : Fragment() {
 
     private val binding get() = _binding!!
-    private var _binding: FragmentFindFalconeBinding? = null
+    private var _binding: FragmentFindFalcone1Binding? = null
     private val viewModel: FindFalconeFragmentViewModel by viewModels()
 
 
@@ -30,7 +33,7 @@ class FindFalconeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_find_falcone, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.fragment_find_falcone1, container, false)
         return binding.root
     }
 
@@ -40,29 +43,83 @@ class FindFalconeFragment : Fragment() {
     }
 
     private fun setupUI() {
-        binding.viewModel = viewModel
-        observerViewStateUpdates()
+        setBindings()
+        val viewPagerAdapter = createViewPagerAdapter()
+        val vehiclesAdapter = createVehiclesAdapter()
+        setViewPager(viewPagerAdapter)
+        setRecyclerView(vehiclesAdapter)
+        observerViewStateUpdates(vehiclesAdapter)
     }
 
-    private fun observerViewStateUpdates() {
-        viewModel.state.observe(viewLifecycleOwner) {
-            updateScreen(it)
+    fun onVehicleClicked(vehicle: UIVehicle){
+      viewModel.onEvent(FindFalconeEvent.OnPlanetClicked(vehicle))
+    }
+
+    private fun setBindings() {
+        binding.viewModel = viewModel
+    }
+
+    private fun setRecyclerView(vehiclesAdapter: VehiclesAdapter) {
+        binding.rvPlanets.apply {
+            adapter = vehiclesAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
         }
     }
 
-    private fun updateScreen(state: FindFalconeViewState) {
-
+    private fun setViewPager(vpAdapter: ScreenSlidePagerAdapter) {
+        binding.pager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                viewModel.onEvent(FindFalconeEvent.OnPageSelected(position))
+            }
+        })
+        binding.pager.apply {
+            adapter = vpAdapter
+            setPageTransformer(ZoomOutPageTransformer())
+        }
 
     }
 
+    private fun createViewPagerAdapter(): ScreenSlidePagerAdapter {
+        return ScreenSlidePagerAdapter(this)
+    }
 
+    private fun createVehiclesAdapter(): VehiclesAdapter {
+        return VehiclesAdapter(this)
+    }
 
+    private fun observerViewStateUpdates(vehiclesAdapter: VehiclesAdapter) {
+        viewModel.state.observe(viewLifecycleOwner) {
+            updateScreen(it, vehiclesAdapter)
+            handleFailures(it.failure)
+        }
+    }
+
+    private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
+        vehiclesAdapter.submitList(state.vehiclesForSelectedPlanet.usableVehiclesForPlanet)
+        binding.rvPlanets.isVisible = state.showVehicles
+    }
+
+    private fun handleFailures(failure: Event<Throwable>?) {
+        val unhandledFailure = failure?.getContentIfNotHandled() ?: return
+
+        val fallbackMessage = getString(R.string.an_error_occurred)
+
+        val snackbarMessage = if (unhandledFailure.message.isNullOrEmpty()) {
+            fallbackMessage
+        } else {
+            unhandledFailure.message!!
+        }
+        if (snackbarMessage.isNotEmpty()) {
+            Snackbar.make(requireView(), snackbarMessage, Snackbar.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
+
+
 }
-
-
-
