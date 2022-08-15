@@ -12,6 +12,7 @@ import sourabh.pal.findfalcone.common.utils.DispatchersProvider
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
+
 abstract class ActivityRetainedModule {
 
   @Binds
