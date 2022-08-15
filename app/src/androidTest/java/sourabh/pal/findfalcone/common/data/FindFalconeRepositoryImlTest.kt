@@ -1,27 +1,25 @@
 package sourabh.pal.findfalcone.common.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import dagger.hilt.android.testing.BindValue
+import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import sourabh.pal.findfalcone.common.data.api.FindFalconeApi
 import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiPlanetMapper
 import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiVehicleMapper
 import sourabh.pal.findfalcone.common.data.api.utils.FakeServer
-import sourabh.pal.findfalcone.common.di.ActivityRetainedModule
 import sourabh.pal.findfalcone.common.domain.repositories.FindFalconeRepository
 import sourabh.pal.findfalcone.common.utils.DispatchersProvider
 import javax.inject.Inject
-import com.google.common.truth.Truth.assertThat
-import retrofit2.HttpException
+import kotlin.test.assertFailsWith
 
 
 @HiltAndroidTest
@@ -47,7 +45,6 @@ class FindFalconeRepositoryImlTest {
     lateinit var apiPlanetMapper: ApiPlanetMapper
 
 
-
     private val dispatchersProvider = object : DispatchersProvider {
         override fun io() = Dispatchers.Main
     }
@@ -69,22 +66,29 @@ class FindFalconeRepositoryImlTest {
         )
     }
 
-   @Test
-   fun requestAllVehicles_success() = runBlocking {
-      val expectedPlanetName = "Space pod"
-      fakeServer.setHappyPathDispatcher()
+    @Test
+    fun requestAllVehicles_success() = runBlocking {
+        val expectedPlanetName = "Space pod"
+        fakeServer.setHappyPathDispatcher()
 
-      val allVehicles = repository.getAllVehicles()
+        val allVehicles = repository.getAllVehicles()
 
-      val vehicle = allVehicles[0]
-      assertThat(vehicle.name).isEqualTo(expectedPlanetName)
-   }
+        val vehicle = allVehicles[0]
+        assertThat(vehicle.name).isEqualTo(expectedPlanetName)
+    }
 
-/*    @Test(expected = HttpException::class)
-    fun requestAllVehicles_failure() = runBlocking {
+
+    @Test
+    fun requestAllVehicles_failure() {
         fakeServer.setErrorPathDispatcher()
-        repository.getAllVehicles()
-    }*/
+        val exception = assertFailsWith<HttpException> {
+            runBlocking {
+                repository.getAllVehicles()
+            }
+        }
+        assertThat(exception).isInstanceOf(HttpException::class.java)
+        assertThat(exception.code()).isEqualTo(404)
+    }
 
     @Test
     fun requestAllPlanets_success() = runBlocking {
@@ -95,6 +99,18 @@ class FindFalconeRepositoryImlTest {
 
         val vehicle = allPlanets[0]
         assertThat(vehicle.name).isEqualTo(expectedPlanetName)
+    }
+
+    @Test
+    fun requestAllPlanets_failure() {
+        fakeServer.setErrorPathDispatcher()
+        val exception = assertFailsWith<HttpException> {
+            runBlocking {
+                repository.getAllPlanets()
+            }
+        }
+        assertThat(exception).isInstanceOf(HttpException::class.java)
+        assertThat(exception.code()).isEqualTo(404)
     }
 
     @After
