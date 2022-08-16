@@ -16,6 +16,7 @@ import sourabh.pal.findfalcone.common.data.api.FindFalconeApi
 import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiPlanetMapper
 import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiVehicleMapper
 import sourabh.pal.findfalcone.common.data.api.utils.FakeServer
+import sourabh.pal.findfalcone.common.domain.NetworkException
 import sourabh.pal.findfalcone.common.domain.repositories.FindFalconeRepository
 import sourabh.pal.findfalcone.common.utils.DispatchersProvider
 import javax.inject.Inject
@@ -81,13 +82,12 @@ class FindFalconeRepositoryImlTest {
     @Test
     fun requestAllVehicles_failure() {
         fakeServer.setErrorPathDispatcher()
-        val exception = assertFailsWith<HttpException> {
+        val exception = assertFailsWith<NetworkException> {
             runBlocking {
                 repository.getAllVehicles()
             }
         }
-        assertThat(exception).isInstanceOf(HttpException::class.java)
-        assertThat(exception.code()).isEqualTo(404)
+        assertThat(exception).isInstanceOf(NetworkException::class.java)
     }
 
     @Test
@@ -104,13 +104,12 @@ class FindFalconeRepositoryImlTest {
     @Test
     fun requestAllPlanets_failure() {
         fakeServer.setErrorPathDispatcher()
-        val exception = assertFailsWith<HttpException> {
+        val exception = assertFailsWith<NetworkException> {
             runBlocking {
                 repository.getAllPlanets()
             }
         }
-        assertThat(exception).isInstanceOf(HttpException::class.java)
-        assertThat(exception.code()).isEqualTo(404)
+        assertThat(exception).isInstanceOf(NetworkException::class.java)
     }
 
     @After
