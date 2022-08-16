@@ -46,7 +46,8 @@ class FindFalconeFragment : Fragment() {
     }
 
     private fun requestInitialData() {
-        viewModel.onEvent(FindFalconeEvent.GetPlanetsAndVehicles)
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
     }
 
     private fun setupUI() {

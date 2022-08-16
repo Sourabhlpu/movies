@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
@@ -40,7 +41,8 @@ class FindFalconeFragmentViewModel @Inject constructor(
                 event.selectedIndex
             )
             is FindFalconeEvent.OnPageSelected -> updateSelectedPageIndex(event.position)
-            FindFalconeEvent.GetPlanetsAndVehicles -> loadInitialData()
+            FindFalconeEvent.GetPlanets -> loadAllPlanets()
+            FindFalconeEvent.GetVehicles -> loadAllVehicles()
             FindFalconeEvent.Submit -> TODO()
             is FindFalconeEvent.OnPlanetClicked -> updateVehicheSelection(event.vehicle)
         }
@@ -56,7 +58,7 @@ class FindFalconeFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             val vehicles = getVehicles()
             val uiVehicles = vehicles.map { uiVehicleMapper.mapToView(it) }
-            _state.value = state.value?.copy(loading = false, vehicles = uiVehicles)
+            _state.value = state.value?.updateToVehiclesListSuccess(uiVehicles)
         }
     }
 
@@ -65,7 +67,7 @@ class FindFalconeFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             val planets = getPlanets()
             val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
-            _state.value = state.value?.copy(loading = false, planets = uiPlanets)
+            _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
         }
     }
 
