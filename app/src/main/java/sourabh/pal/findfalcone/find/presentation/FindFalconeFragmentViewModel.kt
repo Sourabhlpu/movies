@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
@@ -44,13 +43,8 @@ class FindFalconeFragmentViewModel @Inject constructor(
             FindFalconeEvent.GetPlanets -> loadAllPlanets()
             FindFalconeEvent.GetVehicles -> loadAllVehicles()
             FindFalconeEvent.Submit -> TODO()
-            is FindFalconeEvent.OnPlanetClicked -> updateVehicheSelection(event.vehicle)
+            is FindFalconeEvent.OnVehicleClicked -> updateVehicheSelection(event.vehicle)
         }
-    }
-
-    private fun loadInitialData() {
-        loadAllVehicles()
-        loadAllPlanets()
     }
 
     private fun loadAllVehicles() {

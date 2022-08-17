@@ -12,7 +12,6 @@ data class FindFalconeViewState(
     val vehicles: List<UIVehicle> = emptyList(),
     val vehiclesForSelectedPlanet: VehiclesForPlanet = VehiclesForPlanet(vehicles = vehicles),
     val showVehicles: Boolean = false,
-    val selectedVehicleForPlanet: List<Pair<UIPlanet, UIVehicle>> = emptyList(),
     val failure: Event<Throwable>? = null
 ) {
     val numberOfSelectedPlanets get() = planets.filter { it.isSelected }.size

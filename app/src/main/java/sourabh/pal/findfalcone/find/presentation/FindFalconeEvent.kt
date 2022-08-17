@@ -8,6 +8,6 @@ sealed class FindFalconeEvent {
     object GetVehicles: FindFalconeEvent()
     data class PlanetSelected(val isSelected: Boolean = false, val selectedIndex: Int): FindFalconeEvent()
     data class OnPageSelected(val position: Int) : FindFalconeEvent()
-    data class OnPlanetClicked(val vehicle: UIVehicle) : FindFalconeEvent()
+    data class OnVehicleClicked(val vehicle: UIVehicle) : FindFalconeEvent()
     object Submit: FindFalconeEvent()
 }

@@ -60,7 +60,7 @@ class FindFalconeFragment : Fragment() {
     }
 
     fun onVehicleClicked(vehicle: UIVehicle){
-      viewModel.onEvent(FindFalconeEvent.OnPlanetClicked(vehicle))
+      viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(vehicle))
     }
 
     private fun setBindings() {
