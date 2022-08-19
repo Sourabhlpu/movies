@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="sourabh.pal.findfalcone.find.presentation.FindFalconeFragmentViewModel" />
+            type="sourabh.pal.findfalcone.find.presentation.FindFalconeFragmentViewModel1" />
     </data>
 
 

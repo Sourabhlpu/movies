@@ -11,13 +11,15 @@ data class FindFalconeViewState(
     val planets: List<UIPlanet> = emptyList(),
     val vehicles: List<UIVehicle> = emptyList(),
     val vehiclesForSelectedPlanet: VehiclesForPlanet = VehiclesForPlanet(vehicles = vehicles),
+    val currentPlanet: UIPlanet = UIPlanet(),
+    val vehiclesForCurrentPlanet: List<UIVehicle> = emptyList(),
     val showVehicles: Boolean = false,
     val failure: Event<Throwable>? = null
 ) {
     val numberOfSelectedPlanets get() = planets.filter { it.isSelected }.size
 
     fun updateWhenPlanetsPageChanged(currentPage: Int): FindFalconeViewState {
-        if(planets.isEmpty())
+        if (planets.isEmpty())
             return this
         val currentPlanet = planets[currentPage]
         val updatedVehicles =
@@ -63,20 +65,24 @@ data class FindFalconeViewState(
         )
     }
 
-    fun updateToVehiclesListSuccess(uiVehicles: List<UIVehicle>): FindFalconeViewState{
-        return copy( loading = false, vehicles = uiVehicles, vehiclesForSelectedPlanet = VehiclesForPlanet(vehicles = uiVehicles))
+    fun updateToVehiclesListSuccess(uiVehicles: List<UIVehicle>): FindFalconeViewState {
+        return copy(
+            loading = false,
+            vehicles = uiVehicles,
+            vehiclesForSelectedPlanet = VehiclesForPlanet(vehicles = uiVehicles)
+        )
     }
 
-    fun updateToPlanetsListSuccess(uiPlanets: List<UIPlanet>): FindFalconeViewState{
-        return copy( loading = false, planets = uiPlanets)
+    fun updateToPlanetsListSuccess(uiPlanets: List<UIPlanet>): FindFalconeViewState {
+        return copy(loading = false, planets = uiPlanets)
     }
 
     private fun getUpdatedVehiclesList(
         currentSelectedPlanetsPage: Int,
         vehicle: UIVehicle
     ): List<UIVehicle> {
-
         val currentSelectedPlanet = planets[currentSelectedPlanetsPage]
+        //val resetVehicles = resetVehicleSelectionForPlanet(currentSelectedPlanet)
         val isVehicleSelectedForPlanet = !vehicle.isSelected(currentSelectedPlanet)
         val updatedVehicle = vehicle.copy(
             remainingQuantity = getRemainingQuantityForVehicle(
@@ -90,7 +96,8 @@ data class FindFalconeViewState(
                 currentSelectedPlanet
             )
         )
-        return vehicles.map { if (it.name == updatedVehicle.name) updatedVehicle else it }
+        return vehicles
+            .map { if (it.name == updatedVehicle.name) updatedVehicle else it }
     }
 
     private fun getPlanetsSelectedForVehicle(
@@ -126,6 +133,22 @@ data class FindFalconeViewState(
                 uiPlanet.copy(isSelected = isSelected)
             else
                 uiPlanet
+        }
+    }
+
+    private fun resetVehicleSelectionForPlanet(
+        uiPlanet: UIPlanet,
+    ): List<UIVehicle> {
+        return vehicles.map {
+            val updatedSelectedFor = it.selectedFor.toMutableList().apply {
+                remove(uiPlanet)
+            }.toList()
+            it.copy(
+                selectedFor = updatedSelectedFor,
+                remainingQuantity = it.quantity - updatedSelectedFor.size,
+                isSelected = false,
+                enable = it.selectedFor.isNotEmpty() && it.remainingQuantity > 0
+            )
         }
     }
 }

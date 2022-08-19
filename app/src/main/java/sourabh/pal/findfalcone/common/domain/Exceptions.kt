@@ -2,6 +2,6 @@ package sourabh.pal.findfalcone.common.domain
 
 import java.io.IOException
 
-class MaxPlanetSelected(message: String = "all planets selected"): Exception(message )
-class NetworkUnavailableException(message: String = "No network available :(") : IOException(message)
-class NetworkException(message: String): Exception(message)
+data class MaxPlanetSelected(override val message: String = "all planets selected"): Exception(message )
+data class NetworkUnavailableException(override val message: String = "No network available :(") : IOException(message)
+data class NetworkException(override val message: String): Exception(message)

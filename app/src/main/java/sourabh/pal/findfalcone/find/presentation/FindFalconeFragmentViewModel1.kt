@@ -17,20 +17,19 @@ import javax.inject.Inject
 private const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 
 @HiltViewModel
-class FindFalconeFragmentViewModel @Inject constructor(
+class FindFalconeFragmentViewModel1 @Inject constructor(
     private val getPlanets: GetPlanets,
     private val getVehicles: GetVehicles,
     private val uiPlanetMapper: UIPlanetMapper,
     private val uiVehicleMapper: UIVehicleMapper
 ) : ViewModel() {
 
-    val state: LiveData<FindFalconeViewState> get() = _state
-    private val _state = MutableLiveData<FindFalconeViewState>()
+    val state: LiveData<FindFalconeViewState1> get() = _state
+    private val _state = MutableLiveData<FindFalconeViewState1>()
 
-    var currentSelectedPlanetsPage = 0
 
     init {
-        _state.value = FindFalconeViewState()
+        _state.value = FindFalconeViewState1()
     }
 
     fun onEvent(event: FindFalconeEvent) {
@@ -65,24 +64,28 @@ class FindFalconeFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun updateVehicheSelection(vehicle: UIVehicle) {
-        _state.value = state.value!!.updateToVehicleSelected(currentSelectedPlanetsPage, vehicle)
-    }
+    private fun updateVehicheSelection(vehicle: UIVehicle) {}
 
     private fun updateSelectedPageIndex(position: Int) {
-        currentSelectedPlanetsPage = position
-        _state.value = state.value?.updateWhenPlanetsPageChanged(position)
-    }
-
-    private fun onPlanetSelected(isSelected: Boolean, selectedIndex: Int) {
-        val currentState = state.value
-        _state.value = if (isSelected && areAllPlanetsSelected()) {
-            currentState?.updateToAllPlanetsSelected()
-        } else {
-            state.value!!.updateToPlanetSelected(isSelected, selectedIndex)
+        if(_state.value!!.planets.isNotEmpty()){
+            val currentPlanet = _state.value!!.planets[position].copy()
+            val currentVehicles = _state.value!!.vehicles
+            _state.value = state.value?.copy(
+                currentPlanet = currentPlanet,
+                vehiclesForCurrentPlanet = currentVehicles.filter { it.range >= currentPlanet.distance }
+            )
         }
     }
 
-    private fun areAllPlanetsSelected() =
-        _state.value!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
+    private fun onPlanetSelected(isSelected: Boolean, selectedIndex: Int) {
+        val updatedPlanet = _state.value!!.planets[selectedIndex].copy(isSelected = isSelected)
+        val currentVehicles = _state.value!!.vehicles
+        _state.value = state.value!!.copy(
+            currentPlanet = updatedPlanet,
+            vehiclesForCurrentPlanet = currentVehicles.filter { it.range >= updatedPlanet.distance }
+        )
+    }
+
+    private fun areAllPlanetsSelected(){}
+
 }

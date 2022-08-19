@@ -14,7 +14,7 @@ class PlanetSlidePageFragment(private val position: Int) : Fragment() {
 
     private val binding get() = _binding!!
     private var _binding: FragmentPlanetSlidePageBinding? = null
-    private val viewModel: FindFalconeFragmentViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: FindFalconeFragmentViewModel1 by viewModels({ requireParentFragment() })
 
     override fun onCreateView(
         inflater: LayoutInflater,
