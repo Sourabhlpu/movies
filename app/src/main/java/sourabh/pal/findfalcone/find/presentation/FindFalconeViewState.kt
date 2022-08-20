@@ -70,7 +70,6 @@ data class FindFalconeViewState(
         currentSelectedPlanetsPage: Int,
         vehicle: UIVehicle
     ): List<UIVehicle> {
-
         val currentSelectedPlanet = planets[currentSelectedPlanetsPage]
         val isVehicleSelectedForPlanet = !vehicle.isSelected(currentSelectedPlanet)
         val updatedVehicle = vehicle.copy(
