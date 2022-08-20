@@ -20,18 +20,14 @@ data class FindFalconeViewState(
         if(planets.isEmpty())
             return this
         val currentPlanet = planets[currentPage]
-        val updatedVehicles =
-            vehicles.map {
-                if (it.selectedFor.contains(currentPlanet)) it.copy(isSelected = true) else it.copy(
-                    isSelected = false
-                )
-            }
+        val updatedVehicles = getVehiclesListOnPageChange(currentPlanet)
         return copy(
             showVehicles = currentPlanet.isSelected,
             vehiclesForSelectedPlanet = VehiclesForPlanet(currentPlanet, updatedVehicles),
             vehicles = updatedVehicles
         )
     }
+
 
     fun updateToAllPlanetsSelected(): FindFalconeViewState {
         return copy(
@@ -52,7 +48,6 @@ data class FindFalconeViewState(
         currentSelectedPlanetsPage: Int,
         vehicle: UIVehicle
     ): FindFalconeViewState {
-
         val updatedVehicles = getUpdatedVehiclesList(currentSelectedPlanetsPage, vehicle)
         return copy(
             vehicles = updatedVehicles,
@@ -127,5 +122,16 @@ data class FindFalconeViewState(
             else
                 uiPlanet
         }
+    }
+
+    private fun getVehiclesListOnPageChange(currentPlanet: UIPlanet): List<UIVehicle> {
+        val updatedVehicles =
+            vehicles.map {
+                if (it.selectedFor.contains(currentPlanet))
+                    it.copy(isSelected = true)
+                else
+                    it.copy(isSelected = false)
+            }
+        return updatedVehicles
     }
 }

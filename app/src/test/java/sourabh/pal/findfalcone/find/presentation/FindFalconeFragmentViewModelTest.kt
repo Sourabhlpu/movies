@@ -136,7 +136,7 @@ class FindFalconeFragmentViewModelTest {
         }
 
     @Test
-    fun `FindFalconeFragmentViewModel when planets and vehicles are fetched and first planet is visible`() =
+    fun `FindFalconeFragmentViewModel when planets and vehicles are fetched`() =
         testCoroutineRule.runBlockingTest {
             //GIVEN
             repository.isHappyPath = true
@@ -162,12 +162,33 @@ class FindFalconeFragmentViewModelTest {
         }
 
     @Test
-    fun `FindFalconeFragmentViewModel when planets and vehicles are fetched and planet at x position is visible`() =
+    fun `FindFalconeViewModel when a planet is selected`() =
         testCoroutineRule.runBlockingTest {
-            `FindFalconeFragmentViewModel planet becomes visible and no vehicle is selected`(0)
-            `FindFalconeFragmentViewModel planet becomes visible and no vehicle is selected`(1)
-            `FindFalconeFragmentViewModel planet becomes visible and no vehicle is selected`(5)
+            //GIVEN
+            repository.isHappyPath = true
+            val planets = repository.getAllPlanets().map { uiPlanetsMapper.mapToView(it) }
+            val vehicles = repository.getAllVehicles().map { uiVehiclesMapper.mapToView(it) }
+
+            viewModel.state.observeForever { }
+
+            val expectedState = ExpectedStates.whenPlanetIsSelected(
+                vehicles,
+                planets,
+                0,
+                true
+            )
+
+            //When
+            viewModel.onEvent(FindFalconeEvent.GetPlanets)
+            viewModel.onEvent(FindFalconeEvent.GetVehicles)
+            viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+            viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
+
+            //Then
+            val viewState = viewModel.state.value!!
+            assertThat(viewState).isEqualTo(expectedState)
         }
+
 
     @Test
     fun `FindFalconeFragmentViewModel when vehicle is selected for first planet`() =
@@ -179,7 +200,8 @@ class FindFalconeFragmentViewModelTest {
 
             viewModel.state.observeForever { }
 
-            val updatedPlanets = planets.mapIndexed { index, uiPlanet -> if(index == 0) uiPlanet.copy(isSelected = true) else uiPlanet }
+            val updatedPlanets =
+                planets.mapIndexed { index, uiPlanet -> if (index == 0) uiPlanet.copy(isSelected = true) else uiPlanet }
             val updatedVehicles = vehicles.mapIndexed { index, uiVehicle ->
                 if (index == 0)
                     uiVehicle.copy(
@@ -194,7 +216,9 @@ class FindFalconeFragmentViewModelTest {
             val expectedState = FindFalconeViewState(
                 vehicles = updatedVehicles,
                 planets = updatedPlanets,
-                vehiclesForSelectedPlanet = VehiclesForPlanet(planets.first().copy(isSelected = true), updatedVehicles),
+                vehiclesForSelectedPlanet = VehiclesForPlanet(
+                    planets.first().copy(isSelected = true), updatedVehicles
+                ),
                 showVehicles = true
             )
 
@@ -210,31 +234,5 @@ class FindFalconeFragmentViewModelTest {
             assertThat(viewState).isEqualTo(expectedState)
         }
 
-
-    private fun `FindFalconeFragmentViewModel planet becomes visible and no vehicle is selected`(
-        position: Int
-    ) = testCoroutineRule.runBlockingTest {
-        //GIVEN
-        repository.isHappyPath = true
-        val planets = repository.getAllPlanets().map { uiPlanetsMapper.mapToView(it) }
-        val vehicles = repository.getAllVehicles().map { uiVehiclesMapper.mapToView(it) }
-
-        viewModel.state.observeForever { }
-
-        val expectedState = FindFalconeViewState(
-            vehicles = vehicles,
-            planets = planets,
-            vehiclesForSelectedPlanet = VehiclesForPlanet(planets[position], vehicles)
-        )
-
-        //When
-        viewModel.onEvent(FindFalconeEvent.GetPlanets)
-        viewModel.onEvent(FindFalconeEvent.GetVehicles)
-        viewModel.onEvent(FindFalconeEvent.OnPageSelected(position))
-
-        //Then
-        val viewState = viewModel.state.value!!
-        assertThat(viewState).isEqualTo(expectedState)
-    }
 
 }
