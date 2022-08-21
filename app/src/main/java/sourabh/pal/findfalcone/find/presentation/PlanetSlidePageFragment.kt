@@ -39,7 +39,7 @@ class PlanetSlidePageFragment(private val position: Int) : Fragment() {
     private fun setClickListeners() {
         binding.card.apply {
             setOnClickListener {
-                viewModel.onEvent(FindFalconeEvent.PlanetSelected( !isChecked, selectedIndex = position))
+                viewModel.onEvent(FindFalconeEvent.PlanetSelected(!isChecked, selectedIndex = position))
             }
         }
     }
