@@ -89,7 +89,18 @@ data class FindFalconeViewState(
             remainingQuantity = remainingQuantity.coerceIn(0, selectedVehicle.quantity)
         )
 
-        return vehicles.map { if (it == selectedVehicle) updatedVehicle else it }
+        val resetVehicles = vehicles.map {
+            val isSelectedPreviously = it.isSelected(currentPlanet)
+            val remainingQuantityUpdated =
+                if (isSelectedPreviously) it.remainingQuantity + 1 else it.quantity
+            it.copy(
+                selectedFor = it.selectedFor.toMutableList().apply { remove(currentPlanet) },
+                isSelected = false,
+                remainingQuantity = remainingQuantityUpdated.coerceIn(0, it.quantity)
+            )
+        }
+
+        return resetVehicles.map { if (it == selectedVehicle) updatedVehicle else it }
 
 
 /*        val (currentSelectedPlanet, isVehicleSelectedForPlanet, updatedVehicle) = getUpdatedPlanetAfterSelection(
