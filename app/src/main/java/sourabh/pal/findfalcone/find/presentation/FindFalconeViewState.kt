@@ -36,10 +36,18 @@ data class FindFalconeViewState(
 
     fun updateToPlanetSelected(isSelected: Boolean, selectedIndex: Int): FindFalconeViewState {
         val updatedPlanets = getPlanetsListAfterSelection(isSelected, selectedIndex)
+        val updatedVehicles =
+            vehicles.map {
+                it.copy(isSelected = it.isSelectedForPlanet(planets[selectedIndex]))
+            }
         return copy(
             planets = updatedPlanets,
+            vehicles = updatedVehicles,
             showVehicles = isSelected,
-            vehiclesForSelectedPlanet = VehiclesForPlanet(updatedPlanets[selectedIndex], vehicles)
+            vehiclesForSelectedPlanet = VehiclesForPlanet(
+                updatedPlanets[selectedIndex],
+                updatedVehicles
+            )
         )
     }
 
@@ -83,7 +91,7 @@ data class FindFalconeViewState(
         selectedVehicle: UIVehicle,
         currentPlanet: UIPlanet
     ): UIVehicle {
-        val isSelected = !selectedVehicle.isSelected(currentPlanet)
+        val isSelected = !selectedVehicle.isSelectedForPlanet(currentPlanet)
         val updatedSelectedFor: List<UIPlanet> = if (isSelected)
             selectedVehicle.selectedFor.toMutableList().apply { add(currentPlanet) }
         else
@@ -91,19 +99,18 @@ data class FindFalconeViewState(
         val remainingQuantity =
             if (isSelected) selectedVehicle.remainingQuantity - 1 else selectedVehicle.quantity + 1
 
-        val updatedVehicle = selectedVehicle.copy(
+        return selectedVehicle.copy(
             isSelected = !selectedVehicle.isSelected,
             selectedFor = updatedSelectedFor,
             remainingQuantity = remainingQuantity.coerceIn(0, selectedVehicle.quantity)
         )
-        return updatedVehicle
     }
 
     private fun resetVehiclesList(currentPlanet: UIPlanet): List<UIVehicle> {
         val resetVehicles = vehicles.map {
-            val isSelectedPreviously = it.isSelected(currentPlanet)
+            val isSelectedPreviously = it.isSelectedForPlanet(currentPlanet)
             val remainingQuantityUpdated =
-                if (isSelectedPreviously) it.remainingQuantity + 1 else it.quantity
+                if (isSelectedPreviously) it.remainingQuantity + 1 else it.remainingQuantity
             it.copy(
                 selectedFor = it.selectedFor.toMutableList().apply { remove(currentPlanet) },
                 isSelected = false,

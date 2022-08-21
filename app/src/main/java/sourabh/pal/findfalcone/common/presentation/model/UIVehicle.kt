@@ -10,9 +10,8 @@ data class UIVehicle(
     var isSelected: Boolean = false,
     val selectedFor: List<UIPlanet> = emptyList()
 ){
-    fun isSelected(currentPlanet: UIPlanet): Boolean{
-        isSelected = selectedFor.contains(currentPlanet)
-        return isSelected
+    fun isSelectedForPlanet(currentPlanet: UIPlanet): Boolean{
+        return selectedFor.contains(currentPlanet)
     }
 
 }
