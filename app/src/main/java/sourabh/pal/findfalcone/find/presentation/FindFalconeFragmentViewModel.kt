@@ -27,7 +27,6 @@ class FindFalconeFragmentViewModel @Inject constructor(
     val state: LiveData<FindFalconeViewState> get() = _state
     private val _state = MutableLiveData<FindFalconeViewState>()
 
-    var currentSelectedPlanetsPage = 0
 
     init {
         _state.value = FindFalconeViewState()
@@ -61,28 +60,20 @@ class FindFalconeFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             val planets = getPlanets()
             val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
-            _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
+             _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
         }
     }
 
-    private fun updateVehicheSelection(vehicle: UIVehicle) {
-        _state.value = state.value!!.updateToVehicleSelected(currentSelectedPlanetsPage, vehicle)
-    }
+    private fun updateVehicheSelection(vehicle: UIVehicle) {}
 
     private fun updateSelectedPageIndex(position: Int) {
-        currentSelectedPlanetsPage = position
-        _state.value = state.value?.updateWhenPlanetsPageChanged(position)
+        _state.value = state.value!!.updateToWhenPageIsChanged(position)
     }
 
     private fun onPlanetSelected(isSelected: Boolean, selectedIndex: Int) {
-        val currentState = state.value
-        _state.value = if (isSelected && areAllPlanetsSelected()) {
-            currentState?.updateToAllPlanetsSelected()
-        } else {
-            state.value!!.updateToPlanetSelected(isSelected, selectedIndex)
-        }
+        _state.value = state.value!!.updateToPlanetSelected(isSelected, selectedIndex)
     }
 
-    private fun areAllPlanetsSelected() =
-        _state.value!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
+    private fun areAllPlanetsSelected() {}
+
 }

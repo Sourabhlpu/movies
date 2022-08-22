@@ -26,7 +26,7 @@ class FindFalconeFragment : Fragment() {
 
     private val binding get() = _binding!!
     private var _binding: FragmentFindFalconeBinding? = null
-    private val viewModel: FindFalconeFragmentViewModel1 by viewModels()
+    private val viewModel: FindFalconeFragmentViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -104,7 +104,7 @@ class FindFalconeFragment : Fragment() {
         }
     }
 
-    private fun updateScreen(state: FindFalconeViewState1, vehiclesAdapter: VehiclesAdapter) {
+    private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
         vehiclesAdapter.submitList(state.vehiclesForCurrentPlanet)
         binding.rvPlanets.isVisible = state.showVehicles
         binding.loader.isVisible = state.loading

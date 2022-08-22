@@ -25,7 +25,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
             Planet(
                 name = "Enchai",
                 distance = 200
-            ),
+            )/*,
             Planet(
                 name = "Jebing",
                 distance = 300
@@ -41,7 +41,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
             Planet(
                 name = "Pingasor",
                 distance = 600
-            )
+            )*/
         )
     }
 
@@ -58,7 +58,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 quantity = 1,
                 range = 300,
                 speed = 4
-            ),
+            )/*,
             Vehicle(
                 "space shuttle",
                 quantity = 1,
@@ -70,7 +70,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 quantity = 2,
                 range = 600,
                 speed = 10
-            )
+            )*/
         )
     }
 
