@@ -42,7 +42,7 @@ class FindFalconeFragmentViewModel @Inject constructor(
             FindFalconeEvent.GetPlanets -> loadAllPlanets()
             FindFalconeEvent.GetVehicles -> loadAllVehicles()
             FindFalconeEvent.Submit -> TODO()
-            is FindFalconeEvent.OnVehicleClicked -> updateVehicheSelection(event.vehicle)
+            is FindFalconeEvent.OnVehicleClicked -> updateVehicleSelection(event.vehicle)
         }
     }
 
@@ -64,7 +64,9 @@ class FindFalconeFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun updateVehicheSelection(vehicle: UIVehicle) {}
+    private fun updateVehicleSelection(vehicle: UIVehicle) {
+        _state.value = state.value!!.updateToVehicleSelected(vehicle.copy(isSelected = true))
+    }
 
     private fun updateSelectedPageIndex(position: Int) {
         _state.value = state.value!!.updateToWhenPageIsChanged(position)

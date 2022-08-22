@@ -72,7 +72,7 @@ class FindFalconeFragmentViewModelTest {
 
             //Then
             val viewState = viewModel.state.value!!
-            Truth.assertThat(viewState).isEqualTo(expectedViewState)
+            assertThat(viewState).isEqualTo(expectedViewState)
 
         }
 
@@ -93,7 +93,7 @@ class FindFalconeFragmentViewModelTest {
 
             //Then
             val viewState = viewModel.state.value!!
-            Truth.assertThat(viewState).isEqualTo(expectedViewState)
+            assertThat(viewState).isEqualTo(expectedViewState)
 
         }
 
@@ -116,7 +116,7 @@ class FindFalconeFragmentViewModelTest {
 
             //Then
             val viewState = viewModel.state.value!!
-            Truth.assertThat(viewState).isEqualTo(expectedViewState)
+            assertThat(viewState).isEqualTo(expectedViewState)
 
         }
 
@@ -137,7 +137,7 @@ class FindFalconeFragmentViewModelTest {
 
             //Then
             val viewState = viewModel.state.value!!
-            Truth.assertThat(viewState).isEqualTo(expectedViewState)
+            assertThat(viewState).isEqualTo(expectedViewState)
 
         }
 
@@ -178,13 +178,14 @@ class FindFalconeFragmentViewModelTest {
     fun `FindFalconeFragmentViewModel when a vehicle is selected`() {
         //Given
         viewModel.state.observeForever { }
-        val expectedState = expectedStateWhenPlanetIsSelected()
+        val expectedState = expectedStateWhenVehicleIsSelected()
 
         //When
         viewModel.onEvent(FindFalconeEvent.GetPlanets)
         viewModel.onEvent(FindFalconeEvent.GetVehicles)
         viewModel.onEvent(FindFalconeEvent.OnPageSelected( 0))
         viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehicles[0]))
 
         val viewState = viewModel.state.value!!
 
