@@ -13,9 +13,11 @@ data class FindFalconeViewState(
     val vehicles: List<UIVehicle> = emptyList(),
     val vehiclesForSelectedPlanet: VehiclesForPlanet = VehiclesForPlanet(vehicles = vehicles),
     val showVehicles: Boolean = false,
+    val enableSubmitButton: Boolean = true,
     val failure: Event<Throwable>? = null
 ) {
     val numberOfSelectedPlanets get() = planets.filter { it.isSelected }.size
+
 
     fun updateWhenPlanetsPageChanged(currentPage: Int): FindFalconeViewState {
         if (planets.isEmpty())

@@ -273,5 +273,11 @@ class FindFalconeFragmentViewModelTest {
             assertThat(viewState).isEqualTo(expectedState)
         }
 
+    @Test
+    fun `FindFalconeFragmentViewModel when planets and their vehicles are selected`(){
+        //Given
+
+    }
+
 
 }
