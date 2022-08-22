@@ -20,7 +20,7 @@ class FindFalconeViewStateTest {
                 name = "Enchai",
                 distance = 200
             ),
-            UIPlanet(
+/*            UIPlanet(
                 name = "Jebing",
                 distance = 300
             ),
@@ -35,7 +35,7 @@ class FindFalconeViewStateTest {
             UIPlanet(
                 name = "Pingasor",
                 distance = 600
-            )
+            )*/
         )
     }
 
@@ -45,18 +45,14 @@ class FindFalconeViewStateTest {
                 "space pod",
                 quantity = 2,
                 range = 200,
-                speed = 2,
-/*                remainingQuantity = 1,
-                enable = true,
-                isSelected = true,
-                selectedFor = listOf(planetsInitial[0])*/
+                speed = 2
             ),
             UIVehicle(
                 "space rocket",
                 quantity = 1,
                 range = 300,
                 speed = 4
-            ),
+            )/*,
             UIVehicle(
                 "space shuttle",
                 quantity = 1,
@@ -68,7 +64,7 @@ class FindFalconeViewStateTest {
                 quantity = 2,
                 range = 600,
                 speed = 10
-            )
+            )*/
         )
     }
 
@@ -117,7 +113,7 @@ class FindFalconeViewStateTest {
                 vehiclesInitial
             )
         )
-        val updatedState = initialState.updateWhenPlanetsPageChanged(5)
+        val updatedState = initialState.updateWhenPlanetsPageChanged(2)
         assertThat(updatedState).isEqualTo(expectedState)
     }
 

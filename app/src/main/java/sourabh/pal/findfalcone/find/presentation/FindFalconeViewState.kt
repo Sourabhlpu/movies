@@ -1,5 +1,6 @@
 package sourabh.pal.findfalcone.find.presentation
 
+import androidx.annotation.VisibleForTesting
 import sourabh.pal.findfalcone.common.domain.MaxPlanetSelected
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
@@ -20,10 +21,14 @@ data class FindFalconeViewState(
         if (planets.isEmpty())
             return this
         val currentPlanet = planets[currentPage]
+        val updatedVehicles =
+            vehicles.map {
+                it.copy(isSelected = it.isSelectedForPlanet(currentPlanet))
+            }
         return copy(
             showVehicles = currentPlanet.isSelected,
-            vehiclesForSelectedPlanet = VehiclesForPlanet(currentPlanet, vehicles),
-            vehicles = vehicles
+            vehiclesForSelectedPlanet = VehiclesForPlanet(currentPlanet, updatedVehicles),
+            vehicles = updatedVehicles
         )
     }
 
@@ -36,18 +41,16 @@ data class FindFalconeViewState(
 
     fun updateToPlanetSelected(isSelected: Boolean, selectedIndex: Int): FindFalconeViewState {
         val updatedPlanets = getPlanetsListAfterSelection(isSelected, selectedIndex)
+        val currentPlanet = updatedPlanets[selectedIndex]
         val updatedVehicles =
             vehicles.map {
-                it.copy(isSelected = it.isSelectedForPlanet(planets[selectedIndex]))
+                it.copy(isSelected = it.isSelectedForPlanet(currentPlanet))
             }
         return copy(
             planets = updatedPlanets,
             vehicles = updatedVehicles,
             showVehicles = isSelected,
-            vehiclesForSelectedPlanet = VehiclesForPlanet(
-                updatedPlanets[selectedIndex],
-                updatedVehicles
-            )
+            vehiclesForSelectedPlanet = VehiclesForPlanet( currentPlanet, updatedVehicles )
         )
     }
 
@@ -77,6 +80,11 @@ data class FindFalconeViewState(
     fun updateToPlanetsListSuccess(uiPlanets: List<UIPlanet>): FindFalconeViewState {
         return copy(loading = false, planets = uiPlanets)
     }
+
+
+    /*
+      ********************** UTILITY METHODS ************************
+     */
 
     private fun getUpdatedVehiclesList(
         currentPlanet: UIPlanet,
@@ -119,7 +127,6 @@ data class FindFalconeViewState(
         }
         return resetVehicles
     }
-
 
     private fun getPlanetsListAfterSelection(
         isSelected: Boolean,
