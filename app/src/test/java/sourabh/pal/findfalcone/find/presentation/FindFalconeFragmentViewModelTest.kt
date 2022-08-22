@@ -218,6 +218,28 @@ class FindFalconeFragmentViewModelTest {
             assertThat(viewState).isEqualTo(expectedState)
         }
 
+    @Test
+    fun `FindFalconeViewModel when a vehicle is selected and then planet is unselected`()  {
+        //GIVEN
+        repository.isHappyPath = true
+        viewModel.state.observeForever { }
+
+        val expectedState = ExpectedStates.whenPlanetUnselectedAndMovedToSecondPlanetAndSelectedIt()
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(false, 0))
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(1))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 1))
+
+        //Then
+        val viewState = viewModel.state.value!!
+        assertThat(viewState).isEqualTo(expectedState)
+    }
+
 
     @Test
     fun `FindFalconeFragmentViewModel when vehicle is selected for first planet`()  {

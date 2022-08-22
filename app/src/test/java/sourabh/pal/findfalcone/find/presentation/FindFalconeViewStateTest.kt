@@ -113,7 +113,7 @@ class FindFalconeViewStateTest {
                 vehiclesInitial
             )
         )
-        val updatedState = initialState.updateWhenPlanetsPageChanged(2)
+        val updatedState = initialState.updateWhenPlanetsPageChanged(1)
         assertThat(updatedState).isEqualTo(expectedState)
     }
 

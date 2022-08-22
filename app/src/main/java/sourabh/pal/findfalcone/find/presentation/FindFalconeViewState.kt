@@ -40,17 +40,14 @@ data class FindFalconeViewState(
     }
 
     fun updateToPlanetSelected(isSelected: Boolean, selectedIndex: Int): FindFalconeViewState {
+        val currentPlanet = planets[selectedIndex]
+        val updatedVehicles = getVehiclesWhenPlanetIsSelected(isSelected, currentPlanet)
         val updatedPlanets = getPlanetsListAfterSelection(isSelected, selectedIndex)
-        val currentPlanet = updatedPlanets[selectedIndex]
-        val updatedVehicles =
-            vehicles.map {
-                it.copy(isSelected = it.isSelectedForPlanet(currentPlanet))
-            }
         return copy(
             planets = updatedPlanets,
             vehicles = updatedVehicles,
             showVehicles = isSelected,
-            vehiclesForSelectedPlanet = VehiclesForPlanet( currentPlanet, updatedVehicles )
+            vehiclesForSelectedPlanet = VehiclesForPlanet(updatedPlanets[selectedIndex], updatedVehicles)
         )
     }
 
@@ -126,6 +123,26 @@ data class FindFalconeViewState(
             )
         }
         return resetVehicles
+    }
+
+    private fun getVehiclesWhenPlanetIsSelected(
+        isSelected: Boolean,
+        currentPlanet: UIPlanet
+    ): List<UIVehicle> {
+        val updatedVehicles =
+            if (isSelected) vehicles.map {
+                it.copy(isSelected = it.isSelectedForPlanet(currentPlanet))
+            }
+            else vehicles.map {
+                val updatedSelectedFor =
+                    it.selectedFor.toMutableList().apply { remove(currentPlanet) }
+                it.copy(
+                    isSelected = false,
+                    selectedFor = updatedSelectedFor,
+                    remainingQuantity = it.quantity - updatedSelectedFor.size
+                )
+            }
+        return updatedVehicles
     }
 
     private fun getPlanetsListAfterSelection(
