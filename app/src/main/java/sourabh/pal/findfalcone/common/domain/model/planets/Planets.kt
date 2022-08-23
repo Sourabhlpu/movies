@@ -5,5 +5,5 @@ data class Planets(val planets: List<Planet>)
 
 data class Planet(
     val name: String,
-    val distance: Int,
+    val distance: Int = 0,
 )

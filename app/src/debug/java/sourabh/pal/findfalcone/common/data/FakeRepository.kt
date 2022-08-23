@@ -1,6 +1,7 @@
 package sourabh.pal.findfalcone.common.data
 
 import sourabh.pal.findfalcone.common.domain.NetworkException
+import sourabh.pal.findfalcone.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.findfalcone.common.domain.model.planets.Planet
 import sourabh.pal.findfalcone.common.domain.model.vehicles.Vehicle
 import sourabh.pal.findfalcone.common.domain.repositories.FindFalconeRepository
@@ -17,7 +18,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
 
     //private val planets: List<Planet> get() = listOf(Planet("Donlon", 200))
 
-     val planets by lazy {
+    val planets by lazy {
         listOf(
             Planet(
                 name = "Donlon",
@@ -46,7 +47,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
         )
     }
 
-     val vehicles by lazy {
+    val vehicles by lazy {
         listOf(
             Vehicle(
                 "space pod",
@@ -89,6 +90,18 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
             isHappyPath && sendFullList -> planets
             else -> throw NetworkException("Network Exception")
         }
+    }
+
+    override suspend fun findFalcone(vehicleForPlanet: VehiclesAndPlanets): Planet {
+        return Planet("Donlon")
+    }
+
+    override suspend fun getToken() {
+
+    }
+
+    override fun getLocalToken(): String {
+        return ""
     }
 
 }

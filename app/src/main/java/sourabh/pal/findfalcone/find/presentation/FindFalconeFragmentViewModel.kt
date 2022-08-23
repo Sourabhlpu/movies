@@ -10,16 +10,18 @@ import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
+import sourabh.pal.findfalcone.find.domain.usecases.FindFalcone
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 import javax.inject.Inject
 
- const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
+const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 
 @HiltViewModel
 class FindFalconeFragmentViewModel @Inject constructor(
     private val getPlanets: GetPlanets,
     private val getVehicles: GetVehicles,
+    private val findFalcone: FindFalcone,
     private val uiPlanetMapper: UIPlanetMapper,
     private val uiVehicleMapper: UIVehicleMapper
 ) : ViewModel() {
@@ -39,9 +41,19 @@ class FindFalconeFragmentViewModel @Inject constructor(
             is FindFalconeEvent.OnPageSelected -> updateSelectedPageIndex(event.position)
             FindFalconeEvent.GetPlanets -> loadAllPlanets()
             FindFalconeEvent.GetVehicles -> loadAllVehicles()
-            FindFalconeEvent.Submit -> TODO()
+            FindFalconeEvent.Submit -> getDataAndFindFalcone()
             is FindFalconeEvent.OnVehicleClicked -> updateVehicleSelection(event.vehicle)
         }
+    }
+
+    private fun getDataAndFindFalcone() {
+        val selectedPair = state.value!!.selectedPairs
+        val planetNames = selectedPair.keys.map { it.name }
+        val vehicleNames = selectedPair.values.map { it.name }
+        viewModelScope.launch {
+            val planet = findFalcone(vehicles = vehicleNames, planets = planetNames)
+        }
+
     }
 
     private fun loadAllVehicles() {
@@ -58,13 +70,13 @@ class FindFalconeFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             val planets = getPlanets()
             val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
-             _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
+            _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
         }
     }
 
     private fun updateVehicleSelection(vehicle: UIVehicleWitDetails) {
-        if(vehicle.isSelected)
-        _state.value = state.value!!.updateToVehicleUnSelected(vehicle)
+        if (vehicle.isSelected)
+            _state.value = state.value!!.updateToVehicleUnSelected(vehicle)
         else
             _state.value = state.value!!.updateToVehicleSelected(vehicle)
     }
@@ -85,7 +97,7 @@ class FindFalconeFragmentViewModel @Inject constructor(
         _state.value = state.value!!.updateToPlanetUnSelected(selectedIndex)
     }
 
-    private fun areAllPlanetsSelected()  =
+    private fun areAllPlanetsSelected() =
         state.value!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
 
 }

@@ -64,8 +64,13 @@ class FindFalconeFragment : Fragment() {
       viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(vehicle))
     }
 
+    fun onSubmitClicked(){
+        viewModel.onEvent(FindFalconeEvent.Submit)
+    }
+
     private fun setBindings() {
         binding.viewModel = viewModel
+        binding.clickHandler = this
     }
 
     private fun setRecyclerView(vehiclesAdapter: VehiclesAdapter) {
