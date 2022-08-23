@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
@@ -34,10 +35,8 @@ class FindFalconeFragmentViewModel @Inject constructor(
 
     fun onEvent(event: FindFalconeEvent) {
         when (event) {
-            is FindFalconeEvent.PlanetSelected -> onPlanetSelected(
-                event.isSelected,
-                event.selectedIndex
-            )  //separate state for selected and unselected
+            is FindFalconeEvent.PlanetSelected -> onPlanetSelected(event.selectedIndex)
+            is FindFalconeEvent.PlanetUnSelected -> onPlanetUnSelected(event.selectedIndex)
             is FindFalconeEvent.OnPageSelected -> updateSelectedPageIndex(event.position)
             FindFalconeEvent.GetPlanets -> loadAllPlanets()
             FindFalconeEvent.GetVehicles -> loadAllVehicles()
@@ -64,16 +63,23 @@ class FindFalconeFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun updateVehicleSelection(vehicle: UIVehicle) {
-        _state.value = state.value!!.updateToVehicleSelected(vehicle.copy(isSelected = true))
+    private fun updateVehicleSelection(vehicle: UIVehicleWitDetails) {
+        if(vehicle.isSelected)
+        _state.value = state.value!!.updateToVehicleUnSelected(vehicle)
+        else
+            _state.value = state.value!!.updateToVehicleSelected(vehicle)
     }
 
     private fun updateSelectedPageIndex(position: Int) {
         _state.value = state.value!!.updateToWhenPageIsChanged(position)
     }
 
-    private fun onPlanetSelected(isSelected: Boolean, selectedIndex: Int) {
-        _state.value = state.value!!.updateToPlanetSelected(isSelected, selectedIndex)
+    private fun onPlanetSelected(selectedIndex: Int) {
+        _state.value = state.value!!.updateToPlanetSelected(selectedIndex)
+    }
+
+    private fun onPlanetUnSelected(selectedIndex: Int) {
+        _state.value = state.value!!.updateToPlanetUnSelected(selectedIndex)
     }
 
     private fun areAllPlanetsSelected() {}

@@ -1,11 +1,8 @@
 package sourabh.pal.findfalcone.find.presentation
 
-import sourabh.pal.findfalcone.common.domain.MaxPlanetSelected
-import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
-import sourabh.pal.findfalcone.common.presentation.model.VehiclesForPlanet
-import kotlin.math.exp
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 
 private val planetsInitial by lazy {
     listOf(
@@ -65,58 +62,108 @@ private val vehiclesInitial by lazy {
     )
 }
 
-fun expectedStateWhenPageIsVisible(index: Int): FindFalconeViewState{
+fun expectedStateWhenPageIsVisible(index: Int): FindFalconeViewState {
     val expectedPlanets = listOf(
         UIPlanet(name = "Donlon", distance = 100),
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2, enable = true),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4, enable = true)
+        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+    )
+
+    val expectedVehiclesForPlanet = listOf(
+        UIVehicleWitDetails(vehicle = expectedVehicles[0], enable = true, remainingQuantity = 2),
+        UIVehicleWitDetails(vehicle = expectedVehicles[1], enable = true, remainingQuantity = 1)
     )
 
     return FindFalconeViewState(
         planets = expectedPlanets,
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[index],
-        vehiclesForCurrentPlanet = expectedVehicles
+        vehiclesForCurrentPlanet = expectedVehiclesForPlanet
     )
 }
 
-fun expectedStateWhenPlanetIsSelected(): FindFalconeViewState{
+fun expectedStateWhenPlanetIsSelected(): FindFalconeViewState {
     val expectedPlanets = listOf(
         UIPlanet(name = "Donlon", distance = 100, isSelected = true),
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2, enable = true),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4, enable = true)
+        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+    )
+
+    val expectedVehiclesForPlanet = listOf(
+        UIVehicleWitDetails(vehicle = expectedVehicles[0], enable = true),
+        UIVehicleWitDetails(vehicle = expectedVehicles[1], enable = true)
     )
 
     return FindFalconeViewState(
         planets = expectedPlanets,
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[0],
-        vehiclesForCurrentPlanet = expectedVehicles,
+        vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
         showVehicles = true
     )
 }
 
-fun expectedStateWhenVehicleIsSelected(): FindFalconeViewState{
+fun expectedStateWhenVehicleIsSelected(): FindFalconeViewState {
     val expectedPlanets = listOf(
         UIPlanet(name = "Donlon", distance = 100, isSelected = true),
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2, enable = true, isSelected = true),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4, enable = true)
+        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+    )
+
+    val expectedVehiclesForPlanet = listOf(
+        UIVehicleWitDetails(
+            vehicle = expectedVehicles[0],
+            enable = true,
+            isSelected = false,
+            remainingQuantity = 2
+        ),
+        UIVehicleWitDetails(vehicle = expectedVehicles[1], enable = true, isSelected = true, remainingQuantity = 0)
     )
 
     return FindFalconeViewState(
         planets = expectedPlanets,
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[0],
-        vehiclesForCurrentPlanet = expectedVehicles,
+        vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
+        selectedPairs = listOf(Pair(expectedPlanets[0], expectedVehicles[0])),
+        showVehicles = true
+    )
+}
+
+fun expectedStateWhenSecondVehicleIsSelected(): FindFalconeViewState {
+    val expectedPlanets = listOf(
+        UIPlanet(name = "Donlon", distance = 100, isSelected = true),
+        UIPlanet(name = "Enchai", distance = 200),
+    )
+    val expectedVehicles = listOf(
+        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+    )
+
+    val expectedVehiclesForPlanet = listOf(
+        UIVehicleWitDetails(
+            vehicle = expectedVehicles[0],
+            enable = true,
+            isSelected = false,
+            remainingQuantity = 2
+        ),
+        UIVehicleWitDetails(vehicle = expectedVehicles[1], enable = true, isSelected = true, remainingQuantity = 0)
+    )
+
+    return FindFalconeViewState(
+        planets = expectedPlanets,
+        vehicles = expectedVehicles,
+        currentPlanet = expectedPlanets[0],
+        vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
         selectedPairs = listOf(Pair(expectedPlanets[0], expectedVehicles[0])),
         showVehicles = true
     )

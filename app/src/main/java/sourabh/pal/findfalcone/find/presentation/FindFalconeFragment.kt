@@ -18,6 +18,7 @@ import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
 import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
 import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.databinding.FragmentFindFalconeBinding
 
 
@@ -59,7 +60,7 @@ class FindFalconeFragment : Fragment() {
         observerViewStateUpdates(vehiclesAdapter)
     }
 
-    fun onVehicleClicked(vehicle: UIVehicle){
+    fun onVehicleClicked(vehicle: UIVehicleWitDetails){
       viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(vehicle))
     }
 
