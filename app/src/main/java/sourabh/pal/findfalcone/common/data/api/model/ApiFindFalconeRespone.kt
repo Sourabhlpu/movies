@@ -7,11 +7,11 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ApiFindFalconeRespone(
     @field:Json(name = "planet_name")
-    val planetName: String,
+    val planetName: String?,
 
     @field:Json(name = "status")
-    val status: String,
+    val status: String?,
 
     @field:Json(name = "error")
-    val error: String,
+    val error: String?,
 )
