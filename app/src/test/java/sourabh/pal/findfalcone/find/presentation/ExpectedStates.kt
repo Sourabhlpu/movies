@@ -123,10 +123,10 @@ fun expectedStateWhenVehicleIsSelected(): FindFalconeViewState {
         UIVehicleWitDetails(
             vehicle = expectedVehicles[0],
             enable = true,
-            isSelected = false,
-            remainingQuantity = 2
+            isSelected = true,
+            remainingQuantity = 1
         ),
-        UIVehicleWitDetails(vehicle = expectedVehicles[1], enable = true, isSelected = true, remainingQuantity = 0)
+        UIVehicleWitDetails(vehicle = expectedVehicles[1], enable = true, isSelected = false, remainingQuantity = 1)
     )
 
     return FindFalconeViewState(
@@ -134,7 +134,7 @@ fun expectedStateWhenVehicleIsSelected(): FindFalconeViewState {
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[0],
         vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
-        selectedPairs = listOf(Pair(expectedPlanets[0], expectedVehicles[0])),
+        selectedPairs = mapOf(Pair(expectedPlanets[0], expectedVehicles[0])),
         showVehicles = true
     )
 }
@@ -164,7 +164,7 @@ fun expectedStateWhenSecondVehicleIsSelected(): FindFalconeViewState {
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[0],
         vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
-        selectedPairs = listOf(Pair(expectedPlanets[0], expectedVehicles[0])),
+        selectedPairs = mapOf(Pair(expectedPlanets[0], expectedVehicles[1])),
         showVehicles = true
     )
 }

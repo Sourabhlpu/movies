@@ -233,7 +233,7 @@ class FindFalconeFragmentViewModelTest {
     fun `FindFalconeFragmentViewModel when multiple vehicles are selected for planet`() {
         //Given
         viewModel.state.observeForever { }
-        val expectedState = expectedStateWhenVehicleIsSelected()
+        val expectedState = expectedStateWhenSecondVehicleIsSelected()
 
         //When
         viewModel.onEvent(FindFalconeEvent.GetPlanets)
