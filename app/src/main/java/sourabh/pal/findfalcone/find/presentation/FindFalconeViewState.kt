@@ -2,6 +2,7 @@ package sourabh.pal.findfalcone.find.presentation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import sourabh.pal.findfalcone.common.domain.model.vehicles.Vehicle
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
@@ -34,23 +35,18 @@ data class FindFalconeViewState(
         if (planets.isEmpty())
             return this
         val currentPlanet = planets[currentPage]
-        val isCurrentPlanetPairedWithVehicle = selectedPairs.containsKey(currentPlanet)
         return copy(
-            currentPlanet = planets[currentPage],
-            vehiclesForCurrentPlanet = vehiclesForCurrentPlanet.map {
-                it.copy(
-                    isSelected = if(isCurrentPlanetPairedWithVehicle) selectedPairs.getValue(currentPlanet).name == it.vehicle.name else false
-                )
-            }
+            currentPlanet = currentPlanet,
+            vehiclesForCurrentPlanet = getVehiclesWhenPageIsChanged(currentPlanet),
+            showVehicles = currentPlanet.isSelected
         )
     }
 
     fun updateToPlanetSelected(selectedIndex: Int): FindFalconeViewState {
         val currentPlanet = planets[selectedIndex].copy(isSelected = true)
         val vehiclesForPlanet =
-            vehiclesForCurrentPlanet.filter { it.vehicle.range >= currentPlanet.distance }
-        val planetsUpdated =
-            planets.map { if (it.name == currentPlanet.name) currentPlanet else it }
+            vehiclesForCurrentPlanet.map { it.copy(enable = it.vehicle.range >= currentPlanet.distance && it.remainingQuantity > 0) }
+        val planetsUpdated = planets.map { if (it.name == currentPlanet.name) currentPlanet else it }
         return copy(
             planets = planetsUpdated,
             currentPlanet = currentPlanet,
@@ -59,69 +55,88 @@ data class FindFalconeViewState(
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+
     fun updateToPlanetUnSelected(selectedIndex: Int): FindFalconeViewState {
         val currentPlanet = planets[selectedIndex].copy(isSelected = false)
-        val vehiclesForPlanet =
-            vehiclesForCurrentPlanet.filter { it.vehicle.range >= currentPlanet.distance }
-        val planetsUpdated =
-            planets.map { if (it.name == currentPlanet.name) currentPlanet else it }
+        val planetsUpdated = planets.map { if (it.name == currentPlanet.name) currentPlanet else it }
         return copy(
             planets = planetsUpdated,
             currentPlanet = currentPlanet,
-            selectedPairs = selectedPairs.toMutableMap().apply{remove(this@FindFalconeViewState.currentPlanet)},
-            vehiclesForCurrentPlanet = vehiclesForPlanet.map {
-                it.copy(
-                    isSelected = false,
-                    remainingQuantity = (it.remainingQuantity + 1).coerceAtMost(it.vehicle.quantity)
-                )
-            },
+            selectedPairs = selectedPairs.toMutableMap().apply { remove(this@FindFalconeViewState.currentPlanet) },
+            vehiclesForCurrentPlanet = getVehiclesWhenPlanetIsUnselected(),
             showVehicles = false
         )
     }
 
 
-    fun updateToVehicleSelected(selectedVehicle: UIVehicleWitDetails): FindFalconeViewState {
-        var selectedVehicleUpdated = selectedVehicle
-        val updatedVehicles = vehiclesForCurrentPlanet.map {
-            if (it.vehicle.name == selectedVehicle.vehicle.name) {
-                selectedVehicleUpdated =
-                    selectedVehicle.copy(
-                        remainingQuantity = (it.remainingQuantity - 1).coerceAtLeast(
-                            0
-                        ), isSelected = true
-                    )
-                selectedVehicleUpdated
-            } else it.copy(
-                isSelected = false,
-                remainingQuantity = (it.remainingQuantity + 1).coerceAtMost(it.vehicle.quantity)
-            )
-        }
+
+    fun updateToVehicleSelected(vehicle: UIVehicleWitDetails): FindFalconeViewState {
+        val updatedVehicles = getVehiclesWhenVehicleIsSelected(vehicle)
         return copy(
-            selectedPairs = selectedPairs.toMutableMap()
-                .apply { put(currentPlanet, selectedVehicleUpdated.vehicle)},
-            vehiclesForCurrentPlanet = updatedVehicles.filter { it.vehicle.range >= currentPlanet.distance }
+            selectedPairs = selectedPairs.toMutableMap().apply { put(currentPlanet, vehicle.vehicle) },
+            vehiclesForCurrentPlanet = updatedVehicles
         )
     }
 
-    fun updateToVehicleUnSelected(selectedVehicle: UIVehicleWitDetails): FindFalconeViewState {
-        var selectedVehicleUpdated = selectedVehicle
+    fun updateToVehicleUnSelected(vehicle: UIVehicleWitDetails): FindFalconeViewState {
+        val updatedVehicles = getVehiclesWhenVehicleIsUnselected(vehicle)
+        return copy(
+            vehiclesForCurrentPlanet = updatedVehicles,
+            selectedPairs = selectedPairs.toMutableMap().apply { remove(currentPlanet) }
+        )
+    }
+
+
+    /*
+      **************************** Utility Methods ****************************************
+     */
+    private fun getVehiclesWhenVehicleIsUnselected(vehicle: UIVehicleWitDetails): List<UIVehicleWitDetails> {
+        val vehicleUpdated = vehicle.copy(
+            isSelected = false,
+            remainingQuantity = (vehicle.remainingQuantity + 1).coerceAtMost(vehicle.vehicle.quantity)
+        )
         val updatedVehicles = vehiclesForCurrentPlanet.map {
-            if (it.vehicle.name == selectedVehicle.vehicle.name) {
-                selectedVehicleUpdated =
-                    selectedVehicle.copy(
-                        remainingQuantity = (it.remainingQuantity + 1).coerceAtMost(
-                            it.vehicle.quantity
-                        ), isSelected = false
-                    )
-                selectedVehicleUpdated
+            if (it.vehicle.name == vehicleUpdated.vehicle.name) {
+                vehicleUpdated
             } else it
         }
-        return copy(
-            vehiclesForCurrentPlanet = updatedVehicles.filter { it.vehicle.range >= currentPlanet.distance },
-            selectedPairs = selectedPairs.toMutableMap().apply {
-                remove(currentPlanet)
-            }
-        )
+        return updatedVehicles
+    }
+
+    private fun getVehiclesWhenPlanetIsUnselected() = vehiclesForCurrentPlanet.map {
+        if (it.isSelected)
+            it.copy(
+                isSelected = false,
+                remainingQuantity = (it.remainingQuantity + 1).coerceAtMost(it.vehicle.quantity)
+            )
+        else it
+    }
+
+    private fun getVehiclesWhenVehicleIsSelected(vehicle: UIVehicleWitDetails): List<UIVehicleWitDetails> {
+        var selectedVehicle = vehicle.copy(isSelected = true, remainingQuantity = (vehicle.remainingQuantity - 1).coerceAtLeast(0))
+        return vehiclesForCurrentPlanet.map {
+            if (it.vehicle.name == selectedVehicle.vehicle.name) {
+                selectedVehicle
+            } else it.copy(
+                isSelected = false,
+                remainingQuantity = if (it.isSelected) (it.remainingQuantity + 1).coerceAtMost(it.vehicle.quantity) else it.remainingQuantity
+            )
+        }
+    }
+
+    private fun getVehiclesWhenPageIsChanged(currentPlanet: UIPlanet) =
+        vehiclesForCurrentPlanet.map {
+            val updatedIsSelected = checkIfVehicleAndPlanetIsPaired(it.vehicle, currentPlanet)
+            it.copy(
+                isSelected = updatedIsSelected,
+                enable = updatedIsSelected || it.remainingQuantity > 0
+            )
+        }
+
+    private fun checkIfVehicleAndPlanetIsPaired(vehicle: UIVehicle, planet: UIPlanet): Boolean {
+        if (selectedPairs.containsKey(planet)) {
+            return selectedPairs[planet]?.name == vehicle.name
+        }
+        return false
     }
 }
