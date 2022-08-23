@@ -25,7 +25,9 @@ import sourabh.pal.findfalcone.common.data.api.utils.FakeServer
 import sourabh.pal.findfalcone.common.data.di.PreferencesModule
 import sourabh.pal.findfalcone.common.data.preferences.FakePreferences
 import sourabh.pal.findfalcone.common.data.preferences.Preferences
+import sourabh.pal.findfalcone.common.domain.FalconeNotFound
 import sourabh.pal.findfalcone.common.domain.NetworkException
+import sourabh.pal.findfalcone.common.domain.NoTokenToFindFalcone
 import sourabh.pal.findfalcone.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.findfalcone.common.domain.model.planets.Planet
 import sourabh.pal.findfalcone.common.domain.repositories.FindFalconeRepository
@@ -174,6 +176,7 @@ class FindFalconeRepositoryImlTest {
 
     @Test
     fun findFalcone_failure() {
+        preferences.putToken("afadsfAFAaoiafnpnva23iov12")
         fakeServer.setErrorPathDispatcher()
         val exception = assertFailsWith<NetworkException> {
             runBlocking {
@@ -181,6 +184,30 @@ class FindFalconeRepositoryImlTest {
             }
         }
         assertThat(exception).isInstanceOf(NetworkException::class.java)
+    }
+
+    @Test
+    fun findFalcone_unsuccessfull() {
+        preferences.putToken("afadsfAFAaoiafnpnva23iov12")
+        fakeServer.setUnsuccessfullPathDispatcherForFindFalcone("find_falcone_unsuccessful.json")
+        val exception = assertFailsWith<FalconeNotFound> {
+            runBlocking {
+                repository.findFalcone(VehiclesAndPlanets(emptyList(), emptyList()))
+            }
+        }
+        assertThat(exception).isInstanceOf(FalconeNotFound::class.java)
+    }
+
+    @Test
+    fun findFalcone_no_token() {
+        preferences.putToken("")
+        fakeServer.setUnsuccessfullPathDispatcherForFindFalcone("find_falcone_no_token.json")
+        val exception = assertFailsWith<NoTokenToFindFalcone> {
+            runBlocking {
+                repository.findFalcone(VehiclesAndPlanets(emptyList(), emptyList()))
+            }
+        }
+        assertThat(exception).isInstanceOf(NoTokenToFindFalcone::class.java)
     }
 
 

@@ -2,6 +2,7 @@ package sourabh.pal.findfalcone.common.data
 
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import sourabh.pal.findfalcone.common.data.api.ApiConstants
 import sourabh.pal.findfalcone.common.data.api.FindFalconeApi
 import sourabh.pal.findfalcone.common.data.api.model.ApiFindFalconeRequest
 import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiFindFalconeResponseMapper
@@ -12,6 +13,7 @@ import sourabh.pal.findfalcone.common.data.preferences.Preferences
 import sourabh.pal.findfalcone.common.domain.FalconeNotFound
 import sourabh.pal.findfalcone.common.domain.NetworkException
 import sourabh.pal.findfalcone.common.domain.NetworkUnavailableException
+import sourabh.pal.findfalcone.common.domain.NoTokenToFindFalcone
 import sourabh.pal.findfalcone.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.findfalcone.common.domain.model.planets.Planet
 import sourabh.pal.findfalcone.common.domain.model.vehicles.Vehicle
@@ -53,13 +55,10 @@ class FindFalconeRepositoryIml @Inject constructor(
     override suspend fun findFalcone(vehicleForPlanet: VehiclesAndPlanets): Planet {
         return try {
             withContext(ioDispatcher.io()) {
-                val apiPlanets = api.findFalcone(
-                    ApiFindFalconeRequest.fromDomain(
-                        vehicleForPlanet,
-                        preferences.getToken()
-                    )
-                )
-                if(apiPlanets.status == "false") throw FalconeNotFound("Sorry you were not successful!!")
+                val request = ApiFindFalconeRequest.fromDomain(vehicleForPlanet, preferences.getToken())
+                val apiPlanets = api.findFalcone(request)
+                if(apiPlanets.status == ApiConstants.DID_NOT_FIND_FALCONE) throw FalconeNotFound("Sorry you were not successful!!")
+                if(!apiPlanets.error.isNullOrEmpty()) throw NoTokenToFindFalcone(apiPlanets.error.orEmpty())
                 apiFindFalconeResponseMapper.mapToDomain(apiPlanets)
             }
         } catch (exception: HttpException) {

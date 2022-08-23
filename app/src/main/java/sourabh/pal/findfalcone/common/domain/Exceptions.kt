@@ -7,3 +7,4 @@ data class NetworkUnavailableException(override val message: String = "No networ
 data class NetworkException(override val message: String): Exception(message)
 data class PlanetNameEmpty(override val message: String): Exception(message)
 data class FalconeNotFound(override val message: String): Exception(message)
+data class NoTokenToFindFalcone(override val message: String): Exception(message)

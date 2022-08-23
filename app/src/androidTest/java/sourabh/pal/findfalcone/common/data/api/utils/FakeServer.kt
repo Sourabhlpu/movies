@@ -81,6 +81,25 @@ class FakeServer {
     }
   }
 
+  fun setUnsuccessfullPathDispatcherForFindFalcone(fileName: String) {
+    mockWebServer.dispatcher = object : Dispatcher() {
+      override fun dispatch(request: RecordedRequest): MockResponse {
+        val path = request.path ?: return notFoundResponse
+
+        return with(path) {
+          when {
+            startsWith(findFalcone) -> {
+              MockResponse().setResponseCode(200).setBody(getJson(fileName))
+            }
+            else -> {
+              notFoundResponse
+            }
+          }
+        }
+      }
+    }
+  }
+
   fun shutdown() {
     mockWebServer.shutdown()
   }
