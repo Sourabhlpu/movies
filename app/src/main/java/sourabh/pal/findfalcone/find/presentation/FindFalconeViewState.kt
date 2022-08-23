@@ -103,6 +103,12 @@ data class FindFalconeViewState(
         )
     }
 
+    fun updateToFailure(throwable: Throwable): FindFalconeViewState{
+        return copy(
+            failure = Event(throwable)
+        )
+    }
+
 
     /*
       **************************** Utility Methods ****************************************
@@ -130,7 +136,7 @@ data class FindFalconeViewState(
     }
 
     private fun getVehiclesWhenVehicleIsSelected(vehicle: UIVehicleWitDetails): List<UIVehicleWitDetails> {
-        var selectedVehicle = vehicle.copy(isSelected = true, remainingQuantity = (vehicle.remainingQuantity - 1).coerceAtLeast(0))
+        val selectedVehicle = vehicle.copy(isSelected = true, remainingQuantity = (vehicle.remainingQuantity - 1).coerceAtLeast(0))
         return vehiclesForCurrentPlanet.map {
             if (it.vehicle.name == selectedVehicle.vehicle.name) {
                 selectedVehicle

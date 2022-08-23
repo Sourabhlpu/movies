@@ -6,3 +6,4 @@ data class MaxPlanetSelected(override val message: String = "all planets selecte
 data class NetworkUnavailableException(override val message: String = "No network available :(") : IOException(message)
 data class NetworkException(override val message: String): Exception(message)
 data class PlanetNameEmpty(override val message: String): Exception(message)
+data class FalconeNotFound(override val message: String): Exception(message)

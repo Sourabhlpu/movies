@@ -172,6 +172,19 @@ class FindFalconeRepositoryImlTest {
 
     }
 
+    @Test
+    fun findFalcone_failure() {
+        fakeServer.setErrorPathDispatcher()
+        val exception = assertFailsWith<NetworkException> {
+            runBlocking {
+                repository.findFalcone(VehiclesAndPlanets(emptyList(), emptyList()))
+            }
+        }
+        assertThat(exception).isInstanceOf(NetworkException::class.java)
+    }
+
+
+
     @After
     fun teardown() {
         fakeServer.shutdown()

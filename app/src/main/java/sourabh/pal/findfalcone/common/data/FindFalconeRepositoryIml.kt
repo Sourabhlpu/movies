@@ -9,6 +9,7 @@ import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiPlanetMapper
 import sourabh.pal.findfalcone.common.data.api.model.mappers.ApiVehicleMapper
 import sourabh.pal.findfalcone.common.data.preferences.FindFalconePreferences
 import sourabh.pal.findfalcone.common.data.preferences.Preferences
+import sourabh.pal.findfalcone.common.domain.FalconeNotFound
 import sourabh.pal.findfalcone.common.domain.NetworkException
 import sourabh.pal.findfalcone.common.domain.NetworkUnavailableException
 import sourabh.pal.findfalcone.common.domain.model.VehiclesAndPlanets
@@ -58,6 +59,7 @@ class FindFalconeRepositoryIml @Inject constructor(
                         preferences.getToken()
                     )
                 )
+                if(apiPlanets.status == "false") throw FalconeNotFound("Sorry you were not successful!!")
                 apiFindFalconeResponseMapper.mapToDomain(apiPlanets)
             }
         } catch (exception: HttpException) {

@@ -5,11 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import sourabh.pal.findfalcone.common.domain.FalconeNotFound
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
+import sourabh.pal.findfalcone.common.utils.createExceptionHandler
 import sourabh.pal.findfalcone.find.domain.usecases.FindFalcone
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
@@ -50,7 +53,8 @@ class FindFalconeFragmentViewModel @Inject constructor(
         val selectedPair = state.value!!.selectedPairs
         val planetNames = selectedPair.keys.map { it.name }
         val vehicleNames = selectedPair.values.map { it.name }
-        viewModelScope.launch {
+        val exceptionHandler = createExceptionHandler(message = "failed to submit request")
+        viewModelScope.launch(exceptionHandler){
             val planet = findFalcone(vehicles = vehicleNames, planets = planetNames)
         }
 
@@ -58,7 +62,8 @@ class FindFalconeFragmentViewModel @Inject constructor(
 
     private fun loadAllVehicles() {
         _state.value = state.value?.copy(loading = true)
-        viewModelScope.launch {
+        val exceptionHandler = createExceptionHandler(message = "failed to load vehicles")
+        viewModelScope.launch(exceptionHandler) {
             val vehicles = getVehicles()
             val uiVehicles = vehicles.map { uiVehicleMapper.mapToView(it) }
             _state.value = state.value?.updateToVehiclesListSuccess(uiVehicles)
@@ -67,7 +72,8 @@ class FindFalconeFragmentViewModel @Inject constructor(
 
     private fun loadAllPlanets() {
         _state.value = state.value?.copy(loading = true)
-        viewModelScope.launch {
+        val exceptionHandler = createExceptionHandler(message = "failed to load planets")
+        viewModelScope.launch (exceptionHandler){
             val planets = getPlanets()
             val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
             _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
@@ -99,5 +105,15 @@ class FindFalconeFragmentViewModel @Inject constructor(
 
     private fun areAllPlanetsSelected() =
         state.value!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
+
+    private fun createExceptionHandler(message: String): CoroutineExceptionHandler {
+        return viewModelScope.createExceptionHandler(message) {
+            onFailure(it)
+        }
+    }
+
+    private fun onFailure(throwable: Throwable) {
+        _state.value = state.value!!.updateToFailure(throwable)
+    }
 
 }
