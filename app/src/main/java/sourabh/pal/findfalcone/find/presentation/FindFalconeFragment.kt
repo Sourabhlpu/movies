@@ -108,6 +108,7 @@ class FindFalconeFragment : Fragment() {
     private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
         vehiclesAdapter.submitList(state.vehiclesForCurrentPlanet)
         binding.rvPlanets.isVisible = state.showVehicles
+        binding.submitBtn.isEnabled = state.enableButton
         binding.loader.isVisible = state.loading
     }
 

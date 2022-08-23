@@ -11,6 +11,7 @@ import javax.inject.Inject
 class FakeRepository @Inject constructor() : FindFalconeRepository {
 
     var isHappyPath = true
+    var sendFullList = false
 
     //private val vehicles: List<Vehicle> get() = listOf(Vehicle("space pod", quantity = 2, range = 400, speed = 2))
 
@@ -25,7 +26,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
             Planet(
                 name = "Enchai",
                 distance = 200
-            )/*,
+            ),
             Planet(
                 name = "Jebing",
                 distance = 300
@@ -41,7 +42,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
             Planet(
                 name = "Pingasor",
                 distance = 600
-            )*/
+            )
         )
     }
 
@@ -58,7 +59,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 quantity = 1,
                 range = 300,
                 speed = 4
-            )/*,
+            ),
             Vehicle(
                 "space shuttle",
                 quantity = 1,
@@ -70,22 +71,24 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 quantity = 2,
                 range = 600,
                 speed = 10
-            )*/
+            )
         )
     }
 
     override suspend fun getAllVehicles(): List<Vehicle> {
-        if(isHappyPath)
-            return vehicles
-        else
-            throw NetworkException("Network Exception")
+        return when {
+            isHappyPath && !sendFullList -> vehicles.subList(0, 2)
+            isHappyPath && sendFullList -> vehicles
+            else -> throw NetworkException("Network Exception")
+        }
     }
 
     override suspend fun getAllPlanets(): List<Planet> {
-        if(isHappyPath)
-            return planets
-        else
-            throw NetworkException("Network Exception")
+        return when {
+            isHappyPath && !sendFullList -> planets.subList(0, 2)
+            isHappyPath && sendFullList -> planets
+            else -> throw NetworkException("Network Exception")
+        }
     }
 
 }

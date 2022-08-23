@@ -14,8 +14,7 @@ import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 import javax.inject.Inject
 
-
-private const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
+ const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 
 @HiltViewModel
 class FindFalconeFragmentViewModel @Inject constructor(
@@ -75,13 +74,18 @@ class FindFalconeFragmentViewModel @Inject constructor(
     }
 
     private fun onPlanetSelected(selectedIndex: Int) {
-        _state.value = state.value!!.updateToPlanetSelected(selectedIndex)
+        if (areAllPlanetsSelected()) {
+            _state.value = state.value!!.updateToAllPlanetsSelected()
+        } else {
+            _state.value = state.value!!.updateToPlanetSelected(selectedIndex)
+        }
     }
 
     private fun onPlanetUnSelected(selectedIndex: Int) {
         _state.value = state.value!!.updateToPlanetUnSelected(selectedIndex)
     }
 
-    private fun areAllPlanetsSelected() {}
+    private fun areAllPlanetsSelected()  =
+        state.value!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
 
 }

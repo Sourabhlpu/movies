@@ -2,6 +2,7 @@ package sourabh.pal.findfalcone.find.presentation
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import sourabh.pal.findfalcone.common.domain.MaxPlanetSelected
 import sourabh.pal.findfalcone.common.domain.model.vehicles.Vehicle
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
@@ -16,8 +17,11 @@ data class FindFalconeViewState(
     val currentPlanet: UIPlanet = UIPlanet(),
     val vehiclesForCurrentPlanet: List<UIVehicleWitDetails> = emptyList(),
     val showVehicles: Boolean = false,
+    val enableButton: Boolean = false,
     val failure: Event<Throwable>? = null
 ) {
+
+    val numberOfSelectedPlanets get() = selectedPairs.size
 
     fun updateToVehiclesListSuccess(uiVehicles: List<UIVehicle>): FindFalconeViewState {
         return copy(
@@ -51,7 +55,8 @@ data class FindFalconeViewState(
             planets = planetsUpdated,
             currentPlanet = currentPlanet,
             vehiclesForCurrentPlanet = vehiclesForPlanet,
-            showVehicles = true
+            showVehicles = true,
+            enableButton = false
         )
     }
 
@@ -59,12 +64,14 @@ data class FindFalconeViewState(
     fun updateToPlanetUnSelected(selectedIndex: Int): FindFalconeViewState {
         val currentPlanet = planets[selectedIndex].copy(isSelected = false)
         val planetsUpdated = planets.map { if (it.name == currentPlanet.name) currentPlanet else it }
+        val updatedSelectedPair = selectedPairs.toMutableMap().apply { remove(this@FindFalconeViewState.currentPlanet) }
         return copy(
             planets = planetsUpdated,
             currentPlanet = currentPlanet,
-            selectedPairs = selectedPairs.toMutableMap().apply { remove(this@FindFalconeViewState.currentPlanet) },
+            selectedPairs = updatedSelectedPair,
             vehiclesForCurrentPlanet = getVehiclesWhenPlanetIsUnselected(),
-            showVehicles = false
+            showVehicles = false,
+            enableButton = updatedSelectedPair.size == MAX_NO_OF_PLANETS_TO_BE_SELECTED
         )
     }
 
@@ -72,17 +79,27 @@ data class FindFalconeViewState(
 
     fun updateToVehicleSelected(vehicle: UIVehicleWitDetails): FindFalconeViewState {
         val updatedVehicles = getVehiclesWhenVehicleIsSelected(vehicle)
+        val updatedSelectedPair = selectedPairs.toMutableMap().apply { put(currentPlanet, vehicle.vehicle) }
         return copy(
-            selectedPairs = selectedPairs.toMutableMap().apply { put(currentPlanet, vehicle.vehicle) },
-            vehiclesForCurrentPlanet = updatedVehicles
+            selectedPairs = updatedSelectedPair,
+            vehiclesForCurrentPlanet = updatedVehicles,
+            enableButton = updatedSelectedPair.size == MAX_NO_OF_PLANETS_TO_BE_SELECTED
         )
     }
 
     fun updateToVehicleUnSelected(vehicle: UIVehicleWitDetails): FindFalconeViewState {
         val updatedVehicles = getVehiclesWhenVehicleIsUnselected(vehicle)
+        val updatedSelectedPair = selectedPairs.toMutableMap().apply { remove(currentPlanet) }
         return copy(
             vehiclesForCurrentPlanet = updatedVehicles,
-            selectedPairs = selectedPairs.toMutableMap().apply { remove(currentPlanet) }
+            selectedPairs = selectedPairs.toMutableMap().apply { remove(currentPlanet) },
+            enableButton = updatedSelectedPair.size == MAX_NO_OF_PLANETS_TO_BE_SELECTED
+        )
+    }
+
+    fun updateToAllPlanetsSelected(): FindFalconeViewState {
+        return copy(
+            failure = Event(MaxPlanetSelected())
         )
     }
 
