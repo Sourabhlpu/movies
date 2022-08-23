@@ -210,13 +210,9 @@ class FindFalconeRepositoryImlTest {
         assertThat(exception).isInstanceOf(NoTokenToFindFalcone::class.java)
     }
 
-
-
     @After
     fun teardown() {
         fakeServer.shutdown()
     }
-
-
 
 }

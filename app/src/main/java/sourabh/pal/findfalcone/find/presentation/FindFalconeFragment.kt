@@ -115,6 +115,7 @@ class FindFalconeFragment : Fragment() {
         binding.rvPlanets.isVisible = state.showVehicles
         binding.submitBtn.isEnabled = state.enableButton
         binding.loader.isVisible = state.loading
+        binding.tvTime.text = getString(R.string.format_time, state.totalTime)
     }
 
     private fun handleFailures(failure: Event<Throwable>?) {

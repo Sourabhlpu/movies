@@ -18,6 +18,7 @@ data class FindFalconeViewState(
     val vehiclesForCurrentPlanet: List<UIVehicleWitDetails> = emptyList(),
     val showVehicles: Boolean = false,
     val enableButton: Boolean = false,
+    val totalTime: String = "0",
     val failure: Event<Throwable>? = null
 ) {
 
@@ -65,12 +66,14 @@ data class FindFalconeViewState(
         val currentPlanet = planets[selectedIndex].copy(isSelected = false)
         val planetsUpdated = planets.map { if (it.name == currentPlanet.name) currentPlanet else it }
         val updatedSelectedPair = selectedPairs.toMutableMap().apply { remove(this@FindFalconeViewState.currentPlanet) }
+        val totalTime = getTotalTime(updatedSelectedPair.toMap())
         return copy(
             planets = planetsUpdated,
             currentPlanet = currentPlanet,
             selectedPairs = updatedSelectedPair,
             vehiclesForCurrentPlanet = getVehiclesWhenPlanetIsUnselected(),
             showVehicles = false,
+            totalTime = totalTime.toString(),
             enableButton = updatedSelectedPair.size == MAX_NO_OF_PLANETS_TO_BE_SELECTED
         )
     }
@@ -80,9 +83,11 @@ data class FindFalconeViewState(
     fun updateToVehicleSelected(vehicle: UIVehicleWitDetails): FindFalconeViewState {
         val updatedVehicles = getVehiclesWhenVehicleIsSelected(vehicle)
         val updatedSelectedPair = selectedPairs.toMutableMap().apply { put(currentPlanet, vehicle.vehicle) }
+        val totalTime = getTotalTime(updatedSelectedPair.toMap())
         return copy(
             selectedPairs = updatedSelectedPair,
             vehiclesForCurrentPlanet = updatedVehicles,
+            totalTime = totalTime.toString(),
             enableButton = updatedSelectedPair.size == MAX_NO_OF_PLANETS_TO_BE_SELECTED
         )
     }
@@ -90,9 +95,11 @@ data class FindFalconeViewState(
     fun updateToVehicleUnSelected(vehicle: UIVehicleWitDetails): FindFalconeViewState {
         val updatedVehicles = getVehiclesWhenVehicleIsUnselected(vehicle)
         val updatedSelectedPair = selectedPairs.toMutableMap().apply { remove(currentPlanet) }
+        val totalTime = getTotalTime(updatedSelectedPair.toMap())
         return copy(
             vehiclesForCurrentPlanet = updatedVehicles,
             selectedPairs = selectedPairs.toMutableMap().apply { remove(currentPlanet) },
+            totalTime = totalTime.toString(),
             enableButton = updatedSelectedPair.size == MAX_NO_OF_PLANETS_TO_BE_SELECTED
         )
     }
@@ -161,5 +168,16 @@ data class FindFalconeViewState(
             return selectedPairs[planet]?.name == vehicle.name
         }
         return false
+    }
+
+    private fun getTotalTime(selectedItems: Map<UIPlanet, UIVehicle>): Int{
+        var totalTime = 0
+        selectedItems.forEach { (uiPlanet, uiVehicle) ->
+            check(uiVehicle.speed > 0) {
+                "Vehicle speed cannot be zero or less"
+            }
+            totalTime += uiPlanet.distance / uiVehicle.speed
+        }
+        return totalTime
     }
 }
