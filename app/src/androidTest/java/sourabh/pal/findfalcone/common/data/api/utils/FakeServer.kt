@@ -17,6 +17,8 @@ class FakeServer {
   private val endpointSeparator = "/"
   private val vehiclesEndpoint = endpointSeparator + ApiConstants.VEHICLES_ENDPOINT
   private val planetsEndpoint = endpointSeparator + ApiConstants.PLANETS_ENDPOINT
+  private val authEndpoint = endpointSeparator + ApiConstants.AUTH_ENDPOINT
+  private val findFalcone = endpointSeparator + ApiConstants.FIND_FALCONE
   private val notFoundResponse = MockResponse().setResponseCode(404)
 
   val baseEndpoint
@@ -39,6 +41,12 @@ class FakeServer {
             startsWith(planetsEndpoint) -> {
               MockResponse().setResponseCode(200).setBody(getJson("planets.json"))
             }
+            startsWith(authEndpoint) -> {
+              MockResponse().setResponseCode(200).setBody(getJson("token.json"))
+            }
+            startsWith(findFalcone) -> {
+              MockResponse().setResponseCode(200).setBody(getJson("find_falcone.json"))
+            }
             else -> {
               notFoundResponse
             }
@@ -60,6 +68,28 @@ class FakeServer {
             }
             startsWith(planetsEndpoint) -> {
               notFoundResponse
+            }
+            startsWith(authEndpoint) -> {
+              notFoundResponse
+            }
+            else -> {
+              notFoundResponse
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fun setUnsuccessfullPathDispatcherForFindFalcone(fileName: String) {
+    mockWebServer.dispatcher = object : Dispatcher() {
+      override fun dispatch(request: RecordedRequest): MockResponse {
+        val path = request.path ?: return notFoundResponse
+
+        return with(path) {
+          when {
+            startsWith(findFalcone) -> {
+              MockResponse().setResponseCode(200).setBody(getJson(fileName))
             }
             else -> {
               notFoundResponse

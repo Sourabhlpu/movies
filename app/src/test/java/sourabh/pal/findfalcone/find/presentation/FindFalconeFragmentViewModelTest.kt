@@ -10,13 +10,14 @@ import sourabh.pal.findfalcone.TestCoroutineRule
 import sourabh.pal.findfalcone.common.data.FakeRepository
 import sourabh.pal.findfalcone.common.domain.NetworkException
 import sourabh.pal.findfalcone.common.presentation.Event
+import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
-import sourabh.pal.findfalcone.common.presentation.model.VehiclesForPlanet
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
+import sourabh.pal.findfalcone.find.domain.usecases.FindFalcone
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
-
 
 @ExperimentalCoroutinesApi
 class FindFalconeFragmentViewModelTest {
@@ -31,17 +32,23 @@ class FindFalconeFragmentViewModelTest {
     private lateinit var repository: FakeRepository
     private lateinit var getPlanets: GetPlanets
     private lateinit var getVehicles: GetVehicles
+    private lateinit var findFalcone: FindFalcone
     private val uiPlanetsMapper = UIPlanetMapper()
     private val uiVehiclesMapper = UIVehicleMapper()
+    private lateinit var planets: List<UIPlanet>
+    private lateinit var vehicles: List<UIVehicle>
 
     @Before
     fun setup() {
         repository = FakeRepository()
+        planets = repository.planets.map { uiPlanetsMapper.mapToView(it) }
+        vehicles = repository.vehicles.map { uiVehiclesMapper.mapToView(it) }
         getPlanets = GetPlanets(repository)
         getVehicles = GetVehicles(repository)
         viewModel = FindFalconeFragmentViewModel(
             getPlanets,
             getVehicles,
+            findFalcone,
             uiPlanetsMapper,
             uiVehiclesMapper
         )
@@ -59,7 +66,7 @@ class FindFalconeFragmentViewModelTest {
                 loading = false,
                 vehicles = expectedVehicles,
                 failure = null,
-                vehiclesForSelectedPlanet = VehiclesForPlanet(vehicles = expectedVehicles)
+                vehiclesForCurrentPlanet = expectedVehicles.map { UIVehicleWitDetails(vehicle = it) }
             )
 
             //When
@@ -137,147 +144,197 @@ class FindFalconeFragmentViewModelTest {
         }
 
     @Test
-    fun `FindFalconeFragmentViewModel when planets and vehicles are fetched`() =
-        testCoroutineRule.runBlockingTest {
-            //GIVEN
-            repository.isHappyPath = true
-            val planets = repository.getAllPlanets().map { uiPlanetsMapper.mapToView(it) }
-            val vehicles = repository.getAllVehicles().map { uiVehiclesMapper.mapToView(it) }
-
-            viewModel.state.observeForever { }
-
-            val expectedState = FindFalconeViewState(
-                vehicles = vehicles,
-                planets = planets,
-                vehiclesForSelectedPlanet = VehiclesForPlanet(planets.first(), vehicles)
-            )
-
-            //When
-            viewModel.onEvent(FindFalconeEvent.GetPlanets)
-            viewModel.onEvent(FindFalconeEvent.GetVehicles)
-            viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
-
-            //Then
-            val viewState = viewModel.state.value!!
-            assertThat(viewState).isEqualTo(expectedState)
-        }
-
-    @Test
-    fun `FindFalconeViewModel when a planet is selected`() {
-            //GIVEN
-            viewModel.state.observeForever { }
-            val expectedState = ExpectedStates.whenPlanetIsSelected()
-
-            //When
-            viewModel.onEvent(FindFalconeEvent.GetPlanets)
-            viewModel.onEvent(FindFalconeEvent.GetVehicles)
-            viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
-            viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
-
-            //Then
-            val viewState = viewModel.state.value!!
-            assertThat(viewState).isEqualTo(expectedState)
-        }
-
-    @Test
-    fun `FindFalconeViewModel when a planet is unselected`() {
-            //GIVEN
-            repository.isHappyPath = true
-            viewModel.state.observeForever { }
-
-            val expectedState = ExpectedStates.whenPlanetIsUnSelected()
-
-            //When
-            viewModel.onEvent(FindFalconeEvent.GetPlanets)
-            viewModel.onEvent(FindFalconeEvent.GetVehicles)
-            viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
-            viewModel.onEvent(FindFalconeEvent.PlanetSelected(false, 0))
-
-            //Then
-            val viewState = viewModel.state.value!!
-            assertThat(viewState).isEqualTo(expectedState)
-        }
-
-    @Test
-    fun `FindFalconeViewModel when a planet is selected and then  unselected`()  {
-            //GIVEN
-            repository.isHappyPath = true
-            viewModel.state.observeForever { }
-
-            val expectedState = ExpectedStates.whenPlanetIsUnSelected()
-
-            //When
-            viewModel.onEvent(FindFalconeEvent.GetPlanets)
-            viewModel.onEvent(FindFalconeEvent.GetVehicles)
-            viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
-            viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
-            viewModel.onEvent(FindFalconeEvent.PlanetSelected(false, 0))
-
-            //Then
-            val viewState = viewModel.state.value!!
-            assertThat(viewState).isEqualTo(expectedState)
-        }
-
-    @Test
-    fun `FindFalconeViewModel when a vehicle is selected and then planet is unselected`()  {
-        //GIVEN
-        repository.isHappyPath = true
-        viewModel.state.observeForever { }
-
-        val expectedState = ExpectedStates.whenPlanetUnselectedAndMovedToSecondPlanetAndSelectedIt()
+    fun `FindFalconeFragmentViewModel when a page is selected`() {
+        //Given
+        val expectedState = expectedStateWhenPageIsVisible(0)
 
         //When
         viewModel.onEvent(FindFalconeEvent.GetPlanets)
         viewModel.onEvent(FindFalconeEvent.GetVehicles)
         viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
-        viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
-        viewModel.onEvent(FindFalconeEvent.PlanetSelected(false, 0))
-        viewModel.onEvent(FindFalconeEvent.OnPageSelected(1))
-        viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 1))
 
-        //Then
         val viewState = viewModel.state.value!!
+
         assertThat(viewState).isEqualTo(expectedState)
     }
 
 
     @Test
-    fun `FindFalconeFragmentViewModel when vehicle is selected for first planet`()  {
-            //GIVEN
+    fun `FindFalconeFragmentViewModel when a planet is selected`() {
+        //Given
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenPlanetIsSelected()
 
-            val vehicle =   UIVehicle(
-                name = "space pod",
-                quantity = 2,
-                range = 150,
-                speed = 2,
-                remainingQuantity = 2,
-                enable = true,
-                isSelected = false,
-                selectedFor = emptyList()
-            )
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
 
-            viewModel.state.observeForever { }
+        val viewState = viewModel.state.value!!
 
-
-            val expectedState = ExpectedStates.whenVehicleIsSelectedForFirstPlanet()
-
-            //When
-            viewModel.onEvent(FindFalconeEvent.GetPlanets)
-            viewModel.onEvent(FindFalconeEvent.GetVehicles)
-            viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
-            viewModel.onEvent(FindFalconeEvent.PlanetSelected(true, 0))
-            viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(vehicle))
-
-            //Then
-            val viewState = viewModel.state.value!!
-            assertThat(viewState).isEqualTo(expectedState)
-        }
+        assertThat(viewState).isEqualTo(expectedState)
+    }
 
     @Test
-    fun `FindFalconeFragmentViewModel when planets and their vehicles are selected`(){
+    fun `FindFalconeFragmentViewModel when a vehicle is selected`() {
         //Given
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenVehicleIsSelected()
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
+    }
+
+    @Test
+    fun `FindFalconeFragmentViewModel when a vehicle is selected and then planet is unselected`() {
+        //Given
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenPageIsVisible(0)
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+        viewModel.onEvent(FindFalconeEvent.PlanetUnSelected(0))
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
+    }
+
+    @Test
+    fun `FindFalconeFragmentViewModel when a vehicle is selected and then vehicle is unselected`() {
+        //Given
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenPlanetIsSelected()
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
+    }
+
+    @Test
+    fun `FindFalconeFragmentViewModel when multiple vehicles are selected for planet`() {
+        //Given
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenSecondVehicleIsSelected()
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[1]))
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
+    }
+
+    @Test
+    fun `FindFalconeFragmentViewModel when all four pairs are selected`() {
+        //Given
+        repository.sendFullList = true
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenAllPlanetsAndVehiclesAreSelected()
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(1))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(1))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[1]))
+
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(2))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(2))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[2]))
+
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(3))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(3))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[3]))
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
 
     }
+
+    @Test
+    fun `FindFalconeFragmentViewModel when all four pairs are selected and submit is clicked`() {
+        //Given
+        repository.sendFullList = true
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenAllPlanetsAndVehiclesAreSelected().copy(loading = true)
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(1))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(1))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[1]))
+
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(2))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(2))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[2]))
+
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected(3))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected(3))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[3]))
+        viewModel.onEvent(FindFalconeEvent.Submit)
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
+
+    }
+
+/*    @Test
+    fun `FindFalconeFragmentViewModel when all four planets are selected`() {
+        //Given
+        repository.isHappyPath
+        viewModel.state.observeForever { }
+        val expectedState = expectedStateWhenSecondVehicleIsSelected()
+
+        //When
+        viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.OnPageSelected( 0))
+        viewModel.onEvent(FindFalconeEvent.PlanetSelected( 0))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(viewModel.state.value!!.vehiclesForCurrentPlanet[0]))
+        viewModel.onEvent(FindFalconeEvent.OnVehicleClicked( viewModel.state.value!!.vehiclesForCurrentPlanet[1]))
+
+        val viewState = viewModel.state.value!!
+
+        assertThat(viewState).isEqualTo(expectedState)
+    }*/
 
 
 }

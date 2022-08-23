@@ -5,21 +5,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import sourabh.pal.findfalcone.common.domain.FalconeNotFound
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
+import sourabh.pal.findfalcone.common.utils.createExceptionHandler
+import sourabh.pal.findfalcone.find.domain.usecases.FindFalcone
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 import javax.inject.Inject
 
-
-private const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
+const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 
 @HiltViewModel
 class FindFalconeFragmentViewModel @Inject constructor(
     private val getPlanets: GetPlanets,
     private val getVehicles: GetVehicles,
+    private val findFalcone: FindFalcone,
     private val uiPlanetMapper: UIPlanetMapper,
     private val uiVehicleMapper: UIVehicleMapper
 ) : ViewModel() {
@@ -27,7 +32,6 @@ class FindFalconeFragmentViewModel @Inject constructor(
     val state: LiveData<FindFalconeViewState> get() = _state
     private val _state = MutableLiveData<FindFalconeViewState>()
 
-    var currentSelectedPlanetsPage = 0
 
     init {
         _state.value = FindFalconeViewState()
@@ -35,21 +39,31 @@ class FindFalconeFragmentViewModel @Inject constructor(
 
     fun onEvent(event: FindFalconeEvent) {
         when (event) {
-            is FindFalconeEvent.PlanetSelected -> onPlanetSelected(
-                event.isSelected,
-                event.selectedIndex
-            )
+            is FindFalconeEvent.PlanetSelected -> onPlanetSelected(event.selectedIndex)
+            is FindFalconeEvent.PlanetUnSelected -> onPlanetUnSelected(event.selectedIndex)
             is FindFalconeEvent.OnPageSelected -> updateSelectedPageIndex(event.position)
             FindFalconeEvent.GetPlanets -> loadAllPlanets()
             FindFalconeEvent.GetVehicles -> loadAllVehicles()
-            FindFalconeEvent.Submit -> TODO()
-            is FindFalconeEvent.OnVehicleClicked -> updateVehicheSelection(event.vehicle)
+            FindFalconeEvent.Submit -> getDataAndFindFalcone()
+            is FindFalconeEvent.OnVehicleClicked -> updateVehicleSelection(event.vehicle)
         }
+    }
+
+    private fun getDataAndFindFalcone() {
+        val selectedPair = state.value!!.selectedPairs
+        val planetNames = selectedPair.keys.map { it.name }
+        val vehicleNames = selectedPair.values.map { it.name }
+        val exceptionHandler = createExceptionHandler(message = "failed to submit request")
+        viewModelScope.launch(exceptionHandler){
+            val planet = findFalcone(vehicles = vehicleNames, planets = planetNames)
+        }
+
     }
 
     private fun loadAllVehicles() {
         _state.value = state.value?.copy(loading = true)
-        viewModelScope.launch {
+        val exceptionHandler = createExceptionHandler(message = "failed to load vehicles")
+        viewModelScope.launch(exceptionHandler) {
             val vehicles = getVehicles()
             val uiVehicles = vehicles.map { uiVehicleMapper.mapToView(it) }
             _state.value = state.value?.updateToVehiclesListSuccess(uiVehicles)
@@ -58,31 +72,48 @@ class FindFalconeFragmentViewModel @Inject constructor(
 
     private fun loadAllPlanets() {
         _state.value = state.value?.copy(loading = true)
-        viewModelScope.launch {
+        val exceptionHandler = createExceptionHandler(message = "failed to load planets")
+        viewModelScope.launch (exceptionHandler){
             val planets = getPlanets()
             val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
             _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
         }
     }
 
-    private fun updateVehicheSelection(vehicle: UIVehicle) {
-        _state.value = state.value!!.updateToVehicleSelected(currentSelectedPlanetsPage, vehicle)
+    private fun updateVehicleSelection(vehicle: UIVehicleWitDetails) {
+        if (vehicle.isSelected)
+            _state.value = state.value!!.updateToVehicleUnSelected(vehicle)
+        else
+            _state.value = state.value!!.updateToVehicleSelected(vehicle)
     }
 
     private fun updateSelectedPageIndex(position: Int) {
-        currentSelectedPlanetsPage = position
-        _state.value = state.value?.updateWhenPlanetsPageChanged(position)
+        _state.value = state.value!!.updateToWhenPageIsChanged(position)
     }
 
-    private fun onPlanetSelected(isSelected: Boolean, selectedIndex: Int) {
-        val currentState = state.value
-        if (isSelected && areAllPlanetsSelected(currentState)) {
-            _state.value = currentState?.updateToAllPlanetsSelected()
+    private fun onPlanetSelected(selectedIndex: Int) {
+        if (areAllPlanetsSelected()) {
+            _state.value = state.value!!.updateToAllPlanetsSelected()
         } else {
-            _state.value = state.value!!.updateToPlanetSelected(isSelected, selectedIndex)
+            _state.value = state.value!!.updateToPlanetSelected(selectedIndex)
         }
     }
 
-    private fun areAllPlanetsSelected(currentState: FindFalconeViewState?) =
-        currentState!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
+    private fun onPlanetUnSelected(selectedIndex: Int) {
+        _state.value = state.value!!.updateToPlanetUnSelected(selectedIndex)
+    }
+
+    private fun areAllPlanetsSelected() =
+        state.value!!.numberOfSelectedPlanets >= MAX_NO_OF_PLANETS_TO_BE_SELECTED
+
+    private fun createExceptionHandler(message: String): CoroutineExceptionHandler {
+        return viewModelScope.createExceptionHandler(message) {
+            onFailure(it)
+        }
+    }
+
+    private fun onFailure(throwable: Throwable) {
+        _state.value = state.value!!.updateToFailure(throwable)
+    }
+
 }

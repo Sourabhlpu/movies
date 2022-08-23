@@ -18,6 +18,7 @@ import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
 import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
 import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.databinding.FragmentFindFalconeBinding
 
 
@@ -59,12 +60,17 @@ class FindFalconeFragment : Fragment() {
         observerViewStateUpdates(vehiclesAdapter)
     }
 
-    fun onVehicleClicked(vehicle: UIVehicle){
+    fun onVehicleClicked(vehicle: UIVehicleWitDetails){
       viewModel.onEvent(FindFalconeEvent.OnVehicleClicked(vehicle))
+    }
+
+    fun onSubmitClicked(){
+        viewModel.onEvent(FindFalconeEvent.Submit)
     }
 
     private fun setBindings() {
         binding.viewModel = viewModel
+        binding.clickHandler = this
     }
 
     private fun setRecyclerView(vehiclesAdapter: VehiclesAdapter) {
@@ -105,9 +111,11 @@ class FindFalconeFragment : Fragment() {
     }
 
     private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {
-        vehiclesAdapter.submitList(state.vehiclesForSelectedPlanet.usableVehiclesForPlanet)
+        vehiclesAdapter.submitList(state.vehiclesForCurrentPlanet)
         binding.rvPlanets.isVisible = state.showVehicles
+        binding.submitBtn.isEnabled = state.enableButton
         binding.loader.isVisible = state.loading
+        binding.tvTime.text = getString(R.string.format_time, state.totalTime)
     }
 
     private fun handleFailures(failure: Event<Throwable>?) {
