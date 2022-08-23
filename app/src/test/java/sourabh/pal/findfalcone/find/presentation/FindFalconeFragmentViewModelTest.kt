@@ -15,6 +15,7 @@ import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
+import sourabh.pal.findfalcone.find.domain.usecases.FindFalcone
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 
@@ -31,6 +32,7 @@ class FindFalconeFragmentViewModelTest {
     private lateinit var repository: FakeRepository
     private lateinit var getPlanets: GetPlanets
     private lateinit var getVehicles: GetVehicles
+    private lateinit var findFalcone: FindFalcone
     private val uiPlanetsMapper = UIPlanetMapper()
     private val uiVehiclesMapper = UIVehicleMapper()
     private lateinit var planets: List<UIPlanet>
@@ -46,6 +48,7 @@ class FindFalconeFragmentViewModelTest {
         viewModel = FindFalconeFragmentViewModel(
             getPlanets,
             getVehicles,
+            findFalcone,
             uiPlanetsMapper,
             uiVehiclesMapper
         )
