@@ -52,8 +52,6 @@ class FindFalconeFragment : Fragment() {
 
     private fun requestInitialData() {
         viewModel.onEvent(FindFalconeEvent.GetPlanetsAndVehicles)
-        //viewModel.onEvent(FindFalconeEvent.GetPlanets)
-        //viewModel.onEvent(FindFalconeEvent.GetVehicles)
     }
 
     private fun setupUI() {
@@ -118,7 +116,10 @@ class FindFalconeFragment : Fragment() {
 
     private fun handleNavigation(navigateToSuccess: Event<Pair<String, String>>?) {
         if(navigateToSuccess != null){
-            val action =  FindFalconeFragmentDirections.actionFindFalconeFragmentToSuccessFragment()
+            val pair = navigateToSuccess.getContentIfNotHandled()
+            val planet = pair?.first.orEmpty()
+            val totalTime = pair?.second.orEmpty()
+            val action =  FindFalconeFragmentDirections.actionFindFalconeFragmentToSuccessFragment(planet, totalTime)
             findNavController().navigate(action)
         }
     }

@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FindFalconeFragment">
+    app:startDestination="@id/find_falcone_fragment">
 
 
     <fragment
-        android:id="@+id/FindFalconeFragment"
+        android:id="@+id/find_falcone_fragment"
         android:name="sourabh.pal.findfalcone.find.presentation.views.FindFalconeFragment"
         android:label="@string/find_falcone_fragment_label"
         tools:layout="@layout/fragment_find_falcone">
@@ -21,9 +21,19 @@
         android:name="sourabh.pal.findfalcone.find.presentation.views.FindFalconeSuccessFragment"
         android:label="@string/falcone_found"
         tools:layout="@layout/fragment_find_falcone_success">
-
+        <argument
+            android:name="planetName"
+            app:argType="string"
+            />
+        <argument
+            android:name="timeTaken"
+            app:argType="string"/>
         <action
-            android:id="@+id/action_FindFalconeFragment_to_SuccessFragment"
-            app:destination="@id/FindFalconeFragment" />
+            android:id="@+id/action_SuccessFragment_to_FindFalconeFragment"
+            app:popUpTo="@id/find_falcone_fragment"
+            app:destination="@id/find_falcone_fragment"
+            app:popUpToSaveState="true"
+            app:popUpToInclusive="true"
+            />
     </fragment>
 </navigation>

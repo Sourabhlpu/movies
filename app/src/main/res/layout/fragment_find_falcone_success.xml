@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
     </data>
@@ -9,19 +10,41 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:padding="16dp">
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/success_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Success"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:text="@string/success_message"
+            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_time_taken"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Time Taken: 255"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_planet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintTop_toBottomOf="@id/tv_time_taken"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Falcone found on: Donlon"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

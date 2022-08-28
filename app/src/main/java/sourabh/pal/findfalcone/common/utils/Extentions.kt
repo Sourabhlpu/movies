@@ -12,16 +12,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import sourabh.pal.findfalcone.R
 
-@BindingAdapter("adapter")
-fun AutoCompleteTextView.setAdapter(items: List<String>) {
-    val adapter = ArrayAdapter(context, R.layout.dropdown_item, items)
-    adapter.setNotifyOnChange(true)
-    setAdapter(adapter)
-}
-
-fun Int.dpToPx(displayMetrics: DisplayMetrics): Int = (this * displayMetrics.density).toInt()
-
-fun Int.pxToDp(displayMetrics: DisplayMetrics): Int = (this / displayMetrics.density).toInt()
 
 inline fun CoroutineScope.createExceptionHandler(
     message: String,
