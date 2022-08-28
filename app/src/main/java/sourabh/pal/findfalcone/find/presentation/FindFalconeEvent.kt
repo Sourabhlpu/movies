@@ -5,8 +5,7 @@ import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 
 sealed class FindFalconeEvent {
-    object GetPlanets: FindFalconeEvent()
-    object GetVehicles: FindFalconeEvent()
+    object GetPlanetsAndVehicles: FindFalconeEvent()
     data class PlanetSelected(val selectedIndex: Int): FindFalconeEvent()
     data class PlanetUnSelected(val selectedIndex: Int): FindFalconeEvent()
     data class OnPageSelected(val position: Int) : FindFalconeEvent()

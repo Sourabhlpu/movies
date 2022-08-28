@@ -13,7 +13,7 @@
 
         <variable
             name="clickHandler"
-            type="sourabh.pal.findfalcone.find.presentation.FindFalconeFragment" />
+            type="sourabh.pal.findfalcone.find.presentation.views.FindFalconeFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

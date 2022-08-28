@@ -11,7 +11,7 @@
 
         <variable
             name="clickHandler"
-            type="sourabh.pal.findfalcone.find.presentation.FindFalconeFragment" />
+            type="sourabh.pal.findfalcone.find.presentation.views.FindFalconeFragment" />
 
         <variable
             name="viewModel"
@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Time taken: 0"
+                tools:text="Time taken: 0"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

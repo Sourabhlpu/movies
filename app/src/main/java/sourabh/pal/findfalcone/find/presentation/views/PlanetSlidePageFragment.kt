@@ -1,4 +1,4 @@
-package sourabh.pal.findfalcone.find.presentation
+package sourabh.pal.findfalcone.find.presentation.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import sourabh.pal.findfalcone.R
 import sourabh.pal.findfalcone.databinding.FragmentPlanetSlidePageBinding
+import sourabh.pal.findfalcone.find.presentation.FindFalconeEvent
+import sourabh.pal.findfalcone.find.presentation.FindFalconeFragmentViewModel
 
 class PlanetSlidePageFragment(private val position: Int) : Fragment() {
 

@@ -1,4 +1,4 @@
-package sourabh.pal.findfalcone.find.presentation
+package sourabh.pal.findfalcone.find.presentation.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,18 +8,22 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import org.mockito.internal.matchers.Find
 import sourabh.pal.findfalcone.R
 import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.ScreenSlidePagerAdapter
 import sourabh.pal.findfalcone.common.presentation.ZoomOutPageTransformer
 import sourabh.pal.findfalcone.common.presentation.adapter.VehiclesAdapter
-import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.databinding.FragmentFindFalconeBinding
+import sourabh.pal.findfalcone.find.presentation.FindFalconeEvent
+import sourabh.pal.findfalcone.find.presentation.FindFalconeFragmentViewModel
+import sourabh.pal.findfalcone.find.presentation.FindFalconeViewState
 
 
 @AndroidEntryPoint
@@ -47,8 +51,9 @@ class FindFalconeFragment : Fragment() {
     }
 
     private fun requestInitialData() {
-        viewModel.onEvent(FindFalconeEvent.GetPlanets)
-        viewModel.onEvent(FindFalconeEvent.GetVehicles)
+        viewModel.onEvent(FindFalconeEvent.GetPlanetsAndVehicles)
+        //viewModel.onEvent(FindFalconeEvent.GetPlanets)
+        //viewModel.onEvent(FindFalconeEvent.GetVehicles)
     }
 
     private fun setupUI() {
@@ -107,6 +112,14 @@ class FindFalconeFragment : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             updateScreen(it, vehiclesAdapter)
             handleFailures(it.failure)
+            handleNavigation(it.navigateToSuccess)
+        }
+    }
+
+    private fun handleNavigation(navigateToSuccess: Event<Pair<String, String>>?) {
+        if(navigateToSuccess != null){
+            val action =  FindFalconeFragmentDirections.actionFindFalconeFragmentToSuccessFragment()
+            findNavController().navigate(action)
         }
     }
 

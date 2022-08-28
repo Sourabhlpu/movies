@@ -6,5 +6,5 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ApiToken(
     @field:Json(name = "token")
-     val token: String
+     val token: String?
 )

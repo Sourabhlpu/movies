@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import sourabh.pal.findfalcone.common.domain.FalconeNotFound
-import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
+import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
 import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
 import sourabh.pal.findfalcone.common.utils.createExceptionHandler
-import sourabh.pal.findfalcone.find.domain.usecases.FindFalcone
+import sourabh.pal.findfalcone.find.domain.usecases.FindFalconeUsecase
 import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
 import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
 import javax.inject.Inject
@@ -24,7 +24,7 @@ const val MAX_NO_OF_PLANETS_TO_BE_SELECTED = 4
 class FindFalconeFragmentViewModel @Inject constructor(
     private val getPlanets: GetPlanets,
     private val getVehicles: GetVehicles,
-    private val findFalcone: FindFalcone,
+    private val findFalcone: FindFalconeUsecase,
     private val uiPlanetMapper: UIPlanetMapper,
     private val uiVehicleMapper: UIVehicleMapper
 ) : ViewModel() {
@@ -42,10 +42,25 @@ class FindFalconeFragmentViewModel @Inject constructor(
             is FindFalconeEvent.PlanetSelected -> onPlanetSelected(event.selectedIndex)
             is FindFalconeEvent.PlanetUnSelected -> onPlanetUnSelected(event.selectedIndex)
             is FindFalconeEvent.OnPageSelected -> updateSelectedPageIndex(event.position)
-            FindFalconeEvent.GetPlanets -> loadAllPlanets()
-            FindFalconeEvent.GetVehicles -> loadAllVehicles()
+            is FindFalconeEvent.GetPlanetsAndVehicles -> getPlanetsAndVehicles()
             FindFalconeEvent.Submit -> getDataAndFindFalcone()
             is FindFalconeEvent.OnVehicleClicked -> updateVehicleSelection(event.vehicle)
+        }
+    }
+
+    private fun getPlanetsAndVehicles() {
+        _state.value = state.value!!.copy(loading = true)
+
+        val exceptionHandler = createExceptionHandler(message = "failed to fetch data")
+
+        viewModelScope.launch(exceptionHandler) {
+            val planets = async { getPlanets() }
+            val vehicles = async { getVehicles() }
+
+            _state.value = state.value!!.updatedToGetVehiclesAndPlanetsSuccess(
+                uiPlanets = planets.await().map { uiPlanetMapper.mapToView(it) },
+                uiVehicles = vehicles.await().map { uiVehicleMapper.mapToView(it) }
+            )
         }
     }
 
@@ -53,30 +68,17 @@ class FindFalconeFragmentViewModel @Inject constructor(
         val selectedPair = state.value!!.selectedPairs
         val planetNames = selectedPair.keys.map { it.name }
         val vehicleNames = selectedPair.values.map { it.name }
+
+        _state.value = state.value!!.copy(loading = true)
+
         val exceptionHandler = createExceptionHandler(message = "failed to submit request")
-        viewModelScope.launch(exceptionHandler){
-            val planet = findFalcone(vehicles = vehicleNames, planets = planetNames)
-        }
 
-    }
-
-    private fun loadAllVehicles() {
-        _state.value = state.value?.copy(loading = true)
-        val exceptionHandler = createExceptionHandler(message = "failed to load vehicles")
         viewModelScope.launch(exceptionHandler) {
-            val vehicles = getVehicles()
-            val uiVehicles = vehicles.map { uiVehicleMapper.mapToView(it) }
-            _state.value = state.value?.updateToVehiclesListSuccess(uiVehicles)
-        }
-    }
-
-    private fun loadAllPlanets() {
-        _state.value = state.value?.copy(loading = true)
-        val exceptionHandler = createExceptionHandler(message = "failed to load planets")
-        viewModelScope.launch (exceptionHandler){
-            val planets = getPlanets()
-            val uiPlanets = planets.map { uiPlanetMapper.mapToView(it) }
-            _state.value = state.value?.updateToPlanetsListSuccess(uiPlanets)
+            val planet = findFalcone(vehicles = vehicleNames, planets = planetNames)
+            _state.value = state.value!!.copy(
+                loading = false,
+                navigateToSuccess = Event(Pair(planet.name, state.value!!.totalTime))
+            )
         }
     }
 

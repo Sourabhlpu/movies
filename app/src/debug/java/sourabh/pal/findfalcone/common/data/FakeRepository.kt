@@ -14,9 +14,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
     var isHappyPath = true
     var sendFullList = false
 
-    //private val vehicles: List<Vehicle> get() = listOf(Vehicle("space pod", quantity = 2, range = 400, speed = 2))
 
-    //private val planets: List<Planet> get() = listOf(Planet("Donlon", 200))
 
     val planets by lazy {
         listOf(
@@ -28,7 +26,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 name = "Enchai",
                 distance = 200
             ),
-/*            Planet(
+            Planet(
                 name = "Jebing",
                 distance = 300
             ),
@@ -43,10 +41,9 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
             Planet(
                 name = "Pingasor",
                 distance = 600
-            )*/
+            )
         )
     }
-
     val vehicles by lazy {
         listOf(
             Vehicle(
@@ -60,7 +57,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 quantity = 1,
                 range = 200,
                 speed = 4
-            )/*,
+            ),
             Vehicle(
                 "space shuttle",
                 quantity = 1,
@@ -72,7 +69,7 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
                 quantity = 2,
                 range = 600,
                 speed = 10
-            )*/
+            )
         )
     }
 

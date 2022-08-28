@@ -1,5 +1,6 @@
 package sourabh.pal.findfalcone.find.presentation
 
+import sourabh.pal.findfalcone.common.presentation.Event
 import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
 import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
@@ -68,8 +69,8 @@ fun expectedStateWhenPageIsVisible(index: Int): FindFalconeViewState {
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+        UIVehicle("space pod", quantity = 2, range = 150, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 200, speed = 4)
     )
 
     val expectedVehiclesForPlanet = listOf(
@@ -91,8 +92,8 @@ fun expectedStateWhenPlanetIsSelected(): FindFalconeViewState {
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+        UIVehicle("space pod", quantity = 2, range = 150, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 200, speed = 4)
     )
 
     val expectedVehiclesForPlanet = listOf(
@@ -115,8 +116,8 @@ fun expectedStateWhenVehicleIsSelected(): FindFalconeViewState {
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+        UIVehicle("space pod", quantity = 2, range = 150, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 200, speed = 4)
     )
 
     val expectedVehiclesForPlanet = listOf(
@@ -134,6 +135,7 @@ fun expectedStateWhenVehicleIsSelected(): FindFalconeViewState {
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[0],
         vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
+        totalTime = "50",
         selectedPairs = mapOf(Pair(expectedPlanets[0], expectedVehicles[0])),
         showVehicles = true
     )
@@ -145,8 +147,8 @@ fun expectedStateWhenSecondVehicleIsSelected(): FindFalconeViewState {
         UIPlanet(name = "Enchai", distance = 200),
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4)
+        UIVehicle("space pod", quantity = 2, range = 150, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 200, speed = 4)
     )
 
     val expectedVehiclesForPlanet = listOf(
@@ -164,6 +166,7 @@ fun expectedStateWhenSecondVehicleIsSelected(): FindFalconeViewState {
         vehicles = expectedVehicles,
         currentPlanet = expectedPlanets[0],
         vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
+        totalTime = "25",
         selectedPairs = mapOf(Pair(expectedPlanets[0], expectedVehicles[1])),
         showVehicles = true
     )
@@ -179,8 +182,8 @@ fun expectedStateWhenAllPlanetsAndVehiclesAreSelected(): FindFalconeViewState {
         UIPlanet(name = "Pingasor", distance = 600)
     )
     val expectedVehicles = listOf(
-        UIVehicle("space pod", quantity = 2, range = 200, speed = 2),
-        UIVehicle("space rocket", quantity = 1, range = 300, speed = 4),
+        UIVehicle("space pod", quantity = 2, range = 150, speed = 2),
+        UIVehicle("space rocket", quantity = 1, range = 200, speed = 4),
         UIVehicle("space shuttle", quantity = 1, range = 400, speed = 5),
         UIVehicle("space ship", quantity = 2, range = 600, speed = 10)
     )
@@ -206,7 +209,9 @@ fun expectedStateWhenAllPlanetsAndVehiclesAreSelected(): FindFalconeViewState {
         currentPlanet = expectedPlanets[3],
         vehiclesForCurrentPlanet = expectedVehiclesForPlanet,
         selectedPairs = selectedPairs,
+        totalTime = "200",
         showVehicles = true,
-        enableButton = true
+        enableButton = true,
+        navigateToSuccess = Event(Pair("Donlon", "200"))
     )
 }

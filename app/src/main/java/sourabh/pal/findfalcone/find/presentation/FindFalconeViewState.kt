@@ -19,6 +19,7 @@ data class FindFalconeViewState(
     val showVehicles: Boolean = false,
     val enableButton: Boolean = false,
     val totalTime: String = "0",
+    val navigateToSuccess: Event<Pair<String, String>>? = null,
     val failure: Event<Throwable>? = null
 ) {
 
@@ -34,6 +35,15 @@ data class FindFalconeViewState(
 
     fun updateToPlanetsListSuccess(uiPlanets: List<UIPlanet>): FindFalconeViewState {
         return copy(loading = false, planets = uiPlanets)
+    }
+
+    fun updatedToGetVehiclesAndPlanetsSuccess(uiVehicles: List<UIVehicle>, uiPlanets: List<UIPlanet>): FindFalconeViewState{
+        return copy(
+            loading = false,
+            vehicles = uiVehicles,
+            planets = uiPlanets,
+            vehiclesForCurrentPlanet = uiVehicles.map { UIVehicleWitDetails(vehicle = it) }
+        )
     }
 
     fun updateToWhenPageIsChanged(currentPage: Int): FindFalconeViewState {
@@ -112,7 +122,8 @@ data class FindFalconeViewState(
 
     fun updateToFailure(throwable: Throwable): FindFalconeViewState{
         return copy(
-            failure = Event(throwable)
+            failure = Event(throwable),
+            loading = false
         )
     }
 

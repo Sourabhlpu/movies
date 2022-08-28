@@ -70,7 +70,7 @@ class FindFalconeRepositoryIml @Inject constructor(
         try {
             withContext(ioDispatcher.io()) {
                 val apiToken = api.getToken()
-                preferences.putToken(apiToken.token)
+                preferences.putToken(apiToken.token.orEmpty())
             }
         } catch (exception: HttpException) {
             throw NetworkException(exception.message() ?: "Code ${exception.code()}")

@@ -2,7 +2,7 @@ package sourabh.pal.findfalcone.common.presentation
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import sourabh.pal.findfalcone.find.presentation.PlanetSlidePageFragment
+import sourabh.pal.findfalcone.find.presentation.views.PlanetSlidePageFragment
 
 private const val PLANETS_COUNT: Int = 6
 
