@@ -39,5 +39,5 @@
     <fragment
         android:id="@+id/sellAppleFragment"
         android:name="sourabh.pal.mandi.sell.presentation.SellAppleFragment"
-        android:label="SellAppleFragment" />
+        android:label="@string/sell_apple_title" />
 </navigation>

@@ -11,4 +11,12 @@
     <string name="time_taken_format">Time taken: %s</string>
     <string name="success_message">Success! Congratulations on Finding Falcone, King Shan is mighty pleased.</string>
     <string name="name">Name</string>
+    <string name="sell_apple_title">Sell Apple</string>
+    <string name="loyaltyCardIdentifier">Loyalty Card Identifier</string>
+    <string name="village">Village</string>
+    <string name="gross_weight">Gross Weight</string>
+    <string name="tonnes">Tonnes</string>
+    <string name="gross_price">Gross Price</string>
+    <string name="format_loyalty_index">Applied loyalty index: %1$d</string>
+    <string name="sell_my_produce">Sell My Produce</string>
 </resources>
