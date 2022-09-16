@@ -3,6 +3,7 @@ package sourabh.pal.mandi.common.data
 import sourabh.pal.mandi.common.domain.NetworkException
 import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.mandi.common.domain.model.planets.Planet
+import sourabh.pal.mandi.common.domain.model.seller.Seller
 import sourabh.pal.mandi.common.domain.model.vehicles.Vehicle
 import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
 import sourabh.pal.mandi.common.presentation.model.UIPlanet
@@ -95,6 +96,10 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
 
     override suspend fun getToken() {
 
+    }
+
+    override suspend fun searchSellersByName(query: String): List<Seller> {
+        return emptyList<Seller>()
     }
 
     override fun getLocalToken(): String {

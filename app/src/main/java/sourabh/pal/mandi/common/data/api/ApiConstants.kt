@@ -6,8 +6,9 @@ object ApiConstants {
   const val AUTH_ENDPOINT = "token"
   const val FIND_FALCONE = "find"
   const val DID_NOT_FIND_FALCONE = "false"
+  const val SELLERS_ENDPOINT = "sellers"
 }
 
 object ApiParameters {
-
+  const val NAME = "name"
 }
