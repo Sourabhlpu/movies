@@ -9,11 +9,11 @@
 
         <variable
             name="item"
-            type="sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails" />
+            type="sourabh.pal.mandi.common.presentation.model.UIVehicleWitDetails" />
 
         <variable
             name="clickHandler"
-            type="sourabh.pal.findfalcone.find.presentation.views.FindFalconeFragment" />
+            type="sourabh.pal.mandi.find.presentation.views.FindFalconeFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

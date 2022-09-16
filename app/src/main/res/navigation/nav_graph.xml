@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/find_falcone_fragment">
+    app:startDestination="@id/sellAppleFragment">
 
 
     <fragment
         android:id="@+id/find_falcone_fragment"
-        android:name="sourabh.pal.findfalcone.find.presentation.views.FindFalconeFragment"
+        android:name="sourabh.pal.mandi.find.presentation.views.FindFalconeFragment"
         android:label="@string/find_falcone_fragment_label"
         tools:layout="@layout/fragment_find_falcone">
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/success_fragment"
-        android:name="sourabh.pal.findfalcone.find.presentation.views.FindFalconeSuccessFragment"
+        android:name="sourabh.pal.mandi.find.presentation.views.FindFalconeSuccessFragment"
         android:label="@string/falcone_found"
         tools:layout="@layout/fragment_find_falcone_success">
         <argument
@@ -36,4 +36,8 @@
             app:popUpToInclusive="true"
             />
     </fragment>
+    <fragment
+        android:id="@+id/sellAppleFragment"
+        android:name="sourabh.pal.mandi.sell.presentation.SellAppleFragment"
+        android:label="SellAppleFragment" />
 </navigation>

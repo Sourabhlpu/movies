@@ -10,13 +10,13 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "sourabh.pal.findfalcone"
+        applicationId "sourabh.pal.mandi"
         minSdk 21
         targetSdk 32
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "sourabh.pal.findfalcone.HiltTestRunner"
+        testInstrumentationRunner "sourabh.pal.mandi.HiltTestRunner"
     }
     sourceSets {
         androidTest {

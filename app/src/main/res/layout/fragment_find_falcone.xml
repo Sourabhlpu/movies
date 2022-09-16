@@ -5,17 +5,17 @@
 
     <data>
 
-        <import type="sourabh.pal.findfalcone.common.presentation.model.mappers.UiPlanetToStringMapper" />
+        <import type="sourabh.pal.mandi.common.presentation.model.mappers.UiPlanetToStringMapper" />
 
         <import type="android.view.View" />
 
         <variable
             name="clickHandler"
-            type="sourabh.pal.findfalcone.find.presentation.views.FindFalconeFragment" />
+            type="sourabh.pal.mandi.find.presentation.views.FindFalconeFragment" />
 
         <variable
             name="viewModel"
-            type="sourabh.pal.findfalcone.find.presentation.FindFalconeFragmentViewModel" />
+            type="sourabh.pal.mandi.find.presentation.FindFalconeFragmentViewModel" />
     </data>
 
     <ScrollView

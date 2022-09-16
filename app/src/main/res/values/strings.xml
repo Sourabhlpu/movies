@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FindFaldone</string>
+    <string name="app_name">Mandi</string>
 
     <string name="find_falcone_fragment_label">Find Falcone Fragment</string>
     <string name="falcone_found">Falcone Found</string>
@@ -10,4 +10,5 @@
     <string name="found_on_format">Falcone found on: %s</string>
     <string name="time_taken_format">Time taken: %s</string>
     <string name="success_message">Success! Congratulations on Finding Falcone, King Shan is mighty pleased.</string>
+    <string name="name">Name</string>
 </resources>
