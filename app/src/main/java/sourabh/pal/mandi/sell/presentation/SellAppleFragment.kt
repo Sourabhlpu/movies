@@ -2,7 +2,6 @@ package sourabh.pal.mandi.sell.presentation
 
 import android.graphics.drawable.Animatable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,9 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import sourabh.pal.mandi.R
@@ -94,6 +91,7 @@ class SellAppleFragment : Fragment() {
         binding.tvLoyaltyIndex.text =
             getString(R.string.format_loyalty_index, newState.loyaltyIndex)
         binding.tvTotalPrice.text = newState.totalPrice
+        binding.btnSell.isEnabled = newState.enableSubmitButton
     }
 
     private fun setSearchProgress(newState: SellAppleViewState) {

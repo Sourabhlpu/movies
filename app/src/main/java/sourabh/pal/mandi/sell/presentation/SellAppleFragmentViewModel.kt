@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.domain.model.seller.DEFAULT_LOYALTY_INDEX
 import sourabh.pal.mandi.common.presentation.model.UISeller
 import sourabh.pal.mandi.common.presentation.model.UIVillage
@@ -17,16 +18,18 @@ import sourabh.pal.mandi.common.presentation.model.mappers.UIVillageMapper
 import sourabh.pal.mandi.common.utils.createExceptionHandler
 import sourabh.pal.mandi.sell.domain.usecase.GetApplePrice
 import sourabh.pal.mandi.sell.domain.usecase.GetVillagesUseCase
-import sourabh.pal.mandi.sell.domain.usecase.SearchSellerUsecase
+import sourabh.pal.mandi.sell.domain.usecase.SearchSellerUseCase
+import sourabh.pal.mandi.sell.domain.usecase.SellProduceUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class SellAppleFragmentViewModel @Inject constructor(
-    private val searchSeller: SearchSellerUsecase,
+    private val searchSeller: SearchSellerUseCase,
     private val uiSellerMapper: UISellerMapper,
     private val uiVillageMapper: UIVillageMapper,
     private val getVillages: GetVillagesUseCase,
-    private val getApplePrice: GetApplePrice
+    private val getApplePrice: GetApplePrice,
+    private val sellProduceUseCase: SellProduceUseCase
 ) : ViewModel() {
 
     val state: LiveData<SellAppleViewState> get() = _state
@@ -54,12 +57,24 @@ class SellAppleFragmentViewModel @Inject constructor(
     }
 
     private fun handleSellButtonClick() {
-
+        _state.value = state.value!!.copy(isLoadingVillages = true)
+        val exceptionHandler = createExceptionHandler(message = "failed to sell")
+        searchJob = viewModelScope.launch(exceptionHandler) {
+            val sellProduce = Sell(
+                sellerName = selectedSeller?.name.orEmpty(),
+                loyaltyId = selectedSeller?.id.orEmpty(),
+                villageName = selectedVillage?.name.orEmpty(),
+                totalWeight = state.value!!.grossWeight,
+                totalPrice = state.value!!.totalPrice.toDoubleOrNull() ?: 0.00
+            )
+            val message = sellProduceUseCase(sellProduce)
+            _state.value = state.value!!.updateToSuccess(message)
+        }
     }
 
     private fun handleClearName() {
         selectedSeller = null
-        _state.value = state.value!!.resetSeller()
+        _state.value = state.value!!.resetSeller(enableSubmitButton())
         updateTotalPrice()
     }
 
@@ -74,7 +89,7 @@ class SellAppleFragmentViewModel @Inject constructor(
     }
 
     private fun updateTotalPrice() {
-        _state.value = state.value!!.updateTotalPrice(getUpdatedPrice())
+        _state.value = state.value!!.updateTotalPrice(getUpdatedPrice(), enableSubmitButton())
     }
 
     private fun getUpdatedPrice(): String {
@@ -105,7 +120,7 @@ class SellAppleFragmentViewModel @Inject constructor(
         }
         val id = selectedSeller?.id.orEmpty()
         val loyaltyIndex = selectedSeller?.loyaltyIndex ?: DEFAULT_LOYALTY_INDEX
-        _state.value = currentState.updateToNameSubmitted(id, loyaltyIndex)
+        _state.value = currentState.updateToNameSubmitted(id, loyaltyIndex, enableSubmitButton())
         updateTotalPrice()
     }
 
@@ -120,7 +135,7 @@ class SellAppleFragmentViewModel @Inject constructor(
             delay(500)
             val result = searchSeller(query)
             val uiSeller = result.map { uiSellerMapper.mapToView(it) }
-            _state.value = state.value!!.updateToSellerNameUpdate(uiSeller)
+            _state.value = state.value!!.updateToSellerNameUpdate(uiSeller, enableSubmitButton())
         }
     }
 
@@ -132,6 +147,10 @@ class SellAppleFragmentViewModel @Inject constructor(
 
     private fun onFailure(throwable: Throwable) {
         _state.value = state.value!!.updateToFailure(throwable)
+    }
+
+    private fun enableSubmitButton(): Boolean {
+        return selectedSeller != null && selectedVillage != null && state.value!!.grossWeight > 0.0
     }
 
 }

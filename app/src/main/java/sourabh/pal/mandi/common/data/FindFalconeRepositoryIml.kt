@@ -19,6 +19,7 @@ import sourabh.pal.mandi.common.domain.NoTokenToFindFalcone
 import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.mandi.common.domain.model.Village
 import sourabh.pal.mandi.common.domain.model.planets.Planet
+import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.domain.model.seller.Seller
 import sourabh.pal.mandi.common.domain.model.vehicles.Vehicle
 import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
@@ -134,6 +135,17 @@ class FindFalconeRepositoryIml @Inject constructor(
             withContext(ioDispatcher.io()) {
                 delay(500)
                 villages.map { apiVillageMapper.mapToDomain(it) }
+            }
+        } catch (exception: HttpException) {
+            throw NetworkException(exception.message() ?: "Code ${exception.code()}")
+        }
+    }
+
+    override suspend fun sellProduce(sellApple: Sell): String {
+        return try {
+            withContext(ioDispatcher.io()) {
+                delay(500)
+                "Yay! Sold your apples."
             }
         } catch (exception: HttpException) {
             throw NetworkException(exception.message() ?: "Code ${exception.code()}")

@@ -6,7 +6,7 @@ import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
 
-class GetApplePrice @Inject constructor(private val repository: FindFalconeRepository) {
+class GetApplePrice @Inject constructor() {
 
     operator fun invoke(loyaltyIndex: Double, pricePerKg: Double, weightInTonnes: Double): String {
         val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("en", "IN"))

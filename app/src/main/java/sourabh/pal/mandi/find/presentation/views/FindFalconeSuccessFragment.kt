@@ -32,17 +32,15 @@ class FindFalconeSuccessFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val planet = navArgs<FindFalconeSuccessFragmentArgs>().value.planetName
-        val totalTime = navArgs<FindFalconeSuccessFragmentArgs>().value.timeTaken
-        binding.tvPlanet.text = getString(R.string.found_on_format, planet)
-        binding.tvTimeTaken.text = getString(R.string.time_taken_format, totalTime)
+        val sellerName = navArgs<FindFalconeSuccessFragmentArgs>().value.sellerName
+        val totalPrice = navArgs<FindFalconeSuccessFragmentArgs>().value.totalPrice
+        val totalWeight = navArgs<FindFalconeSuccessFragmentArgs>().value.totalWeight
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true){
-            override fun handleOnBackPressed() {
-                findNavController().navigate(FindFalconeSuccessFragmentDirections.actionSuccessFragmentToFindFalconeFragment())
-            }
-        })
+        val thankYouMessage = getString(R.string.format_success_message, sellerName)
+        val subSuccessMessage = getString(R.string.format_message_ensure, totalPrice, totalWeight)
+
+        binding.tvThanks.text = thankYouMessage
+        binding.tvEnsure.text = subSuccessMessage
     }
-
 
 }

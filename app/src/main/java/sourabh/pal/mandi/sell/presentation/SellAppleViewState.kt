@@ -20,7 +20,9 @@ data class SellAppleViewState(
     val currency: String = "",
     val sellerNameSuggestions: List<UISeller> = emptyList(),
     val villages: List<UIVillage> = emptyList(),
-    val failure: Event<Throwable>? = null
+    val enableSubmitButton: Boolean = false,
+    val failure: Event<Throwable>? = null,
+    val navigateOnSuccess: Event<String>? = null,
 ) {
     fun updateToFailure(throwable: Throwable): SellAppleViewState {
         return copy(
@@ -35,16 +37,17 @@ data class SellAppleViewState(
         )
     }
 
-    fun resetSeller(): SellAppleViewState {
+    fun resetSeller(enableButton: Boolean): SellAppleViewState {
         return copy(
-            loyaltyIndex = DEFAULT_LOYALTY_INDEX, sellerName = "", loyaltyCardNumber = ""
+            loyaltyIndex = DEFAULT_LOYALTY_INDEX, sellerName = "", loyaltyCardNumber = "", enableSubmitButton = enableButton
         )
     }
 
-    fun updateTotalPrice(totalPrice: String): SellAppleViewState {
+    fun updateTotalPrice(totalPrice: String, enableButton: Boolean): SellAppleViewState {
         return copy(
             totalPrice = totalPrice,
-            grossWeight = grossWeight
+            grossWeight = grossWeight,
+            enableSubmitButton = enableButton
         )
     }
 
@@ -55,17 +58,25 @@ data class SellAppleViewState(
         )
     }
 
-    fun updateToNameSubmitted(id: String, loyaltyIndex: Double): SellAppleViewState {
+    fun updateToNameSubmitted(id: String, loyaltyIndex: Double, enableButton: Boolean): SellAppleViewState {
         return copy(
             loyaltyCardNumber = id,
             isSearchingNames = false,
             loyaltyIndex = loyaltyIndex,
+            enableSubmitButton = enableButton
         )
     }
 
-    fun updateToSellerNameUpdate( suggestions: List<UISeller>): SellAppleViewState {
+    fun updateToSellerNameUpdate( suggestions: List<UISeller>, enableButton: Boolean): SellAppleViewState {
         return copy(
-            sellerNameSuggestions = suggestions, isSearchingNames = false
+            sellerNameSuggestions = suggestions, isSearchingNames = false, enableSubmitButton = enableButton
         )
     }
+
+    fun updateToSuccess(message: String): SellAppleViewState{
+        return copy(
+            navigateOnSuccess = Event(message)
+        )
+    }
+
 }

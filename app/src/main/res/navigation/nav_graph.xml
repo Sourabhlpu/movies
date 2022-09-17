@@ -22,11 +22,14 @@
         android:label="@string/falcone_found"
         tools:layout="@layout/fragment_find_falcone_success">
         <argument
-            android:name="planetName"
+            android:name="sellerName"
             app:argType="string"
             />
         <argument
-            android:name="timeTaken"
+            android:name="totalPrice"
+            app:argType="string"/>
+        <argument
+            android:name="totalWeight"
             app:argType="string"/>
         <action
             android:id="@+id/action_SuccessFragment_to_FindFalconeFragment"
@@ -39,5 +42,9 @@
     <fragment
         android:id="@+id/sellAppleFragment"
         android:name="sourabh.pal.mandi.sell.presentation.SellAppleFragment"
-        android:label="@string/sell_apple_title" />
+        android:label="@string/sell_apple_title" >
+        <action
+            android:id="@+id/action_sellProduce_to_SuccessFragment"
+            app:destination="@id/success_fragment" />
+    </fragment>
 </navigation>
