@@ -1,5 +1,6 @@
 package sourabh.pal.mandi.common.data
 
+import android.util.Log
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
@@ -31,6 +32,7 @@ val sellers = listOf(
     ApiSeller("Ankit", id = "A1261"),
     ApiSeller("Priya", id = "B1241"),
     ApiSeller("Nityam", id = "N1241"),
+    ApiSeller("Nityammm", id = "N1241"),
     ApiSeller("Aman", id = "A1234"),
     ApiSeller("Rahul", id = "A1121"),
     ApiSeller("Vikas", id = null),
@@ -105,9 +107,11 @@ class FindFalconeRepositoryIml @Inject constructor(
         return try {
             withContext(ioDispatcher.io()) {
                 //val response = api.searchSellers(query)
-                val response = ApiSearchSellerResponse("Success", null, sellers)
-                val sellers = response.sellers
-                sellers.map { apiSellerMapper.mapToDomain(it) }
+                Log.d("test query", query)
+                delay(500)
+                val filteredSellers = sellers.filter { it.name.orEmpty().startsWith(query, true)}
+                Log.d("test filter", filteredSellers.toString())
+                filteredSellers.map { apiSellerMapper.mapToDomain(it) }
             }
         } catch (exception: HttpException) {
             throw NetworkException(exception.message() ?: "Code ${exception.code()}")

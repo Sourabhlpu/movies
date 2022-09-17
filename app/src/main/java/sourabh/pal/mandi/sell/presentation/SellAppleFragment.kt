@@ -1,17 +1,21 @@
 package sourabh.pal.mandi.sell.presentation
 
+import android.graphics.drawable.Animatable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.ProgressBar
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import sourabh.pal.mandi.R
+import sourabh.pal.mandi.common.utils.getProgressBarDrawable
 import sourabh.pal.mandi.databinding.FragmentSellAppleBinding
 
 @AndroidEntryPoint
@@ -59,6 +63,20 @@ class SellAppleFragment : Fragment() {
 
     private fun updateScreenState(newState: SellAppleViewState) {
         setupValuesFor(binding.nameEt, newState.sellerNameSuggestions.map { it.name })
+        setSearchProgress(newState)
+
+    }
+
+    private fun setSearchProgress(newState: SellAppleViewState) {
+        val isSearching = newState.isSearchingNames
+        val textInput = binding.enterNameWidget
+        textInput.endIconMode = if (isSearching) TextInputLayout.END_ICON_CUSTOM else TextInputLayout.END_ICON_CLEAR_TEXT
+        if (isSearching) {
+            val progressDrawable = requireContext().getProgressBarDrawable()
+            textInput.endIconDrawable = progressDrawable
+            textInput.endIconMode = TextInputLayout.END_ICON_CUSTOM
+            (progressDrawable as? Animatable)?.start()
+        }
     }
 
     private fun setupValuesFor(dropdown: AutoCompleteTextView, dropdownValues: List<String>) {

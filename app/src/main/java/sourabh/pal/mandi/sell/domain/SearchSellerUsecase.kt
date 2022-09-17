@@ -8,22 +8,7 @@ import javax.inject.Inject
 
 class SearchSellerUsecase @Inject constructor(private val repository: FindFalconeRepository) {
 
-    suspend operator fun invoke(query: SharedFlow<String>): Flow<List<Seller>> {
-
-        val result = query
-            .debounce(500)
-            .filter { it.length > 2 }
-            .distinctUntilChanged()
-            .map {
-                repository.searchSellersByName(it)
-            }
-
-        return flow {
-            var lisst = emptyList<Seller>()
-            result.collectLatest {
-                lisst = it
-            }
-            emit(lisst)
-        }
+    suspend operator fun invoke(query: String): List<Seller> {
+        return repository.searchSellersByName(query)
     }
 }

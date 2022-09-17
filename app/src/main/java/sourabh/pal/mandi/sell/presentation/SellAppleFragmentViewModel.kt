@@ -6,33 +6,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import sourabh.pal.mandi.common.presentation.model.UISeller
+import sourabh.pal.mandi.common.presentation.model.mappers.UISellerMapper
 import sourabh.pal.mandi.common.utils.createExceptionHandler
 import sourabh.pal.mandi.sell.domain.SearchSellerUsecase
 import javax.inject.Inject
 
 @HiltViewModel
 class SellAppleFragmentViewModel @Inject constructor(
-    val searchSeller: SearchSellerUsecase
+    val searchSeller: SearchSellerUsecase,
+    private val uiSellerMapper: UISellerMapper
 ) : ViewModel() {
 
     val state: LiveData<SellAppleViewState> get() = _state
     private val _state = MutableLiveData<SellAppleViewState>()
 
-    private val _nameSharedFlow = MutableSharedFlow<String>()
+    private var searchJob: Job? = null
 
-    val nameSharedFlow = _nameSharedFlow.asSharedFlow()
-
-
-    init {
-        _state.value = SellAppleViewState()
-        setupSearchSubscription()
-    }
+    init { _state.value = SellAppleViewState() }
 
     fun onEvent(event: SellAppleEvent) {
         when (event) {
@@ -40,10 +33,17 @@ class SellAppleFragmentViewModel @Inject constructor(
         }
     }
 
-    private fun onSellerNameUpdate(name: String) {
+    private fun onSellerNameUpdate(query: String) {
+        if (query.isEmpty())
+            return
+        _state.value = state.value!!.copy(isSearchingNames = true)
         val exceptionHandler = createExceptionHandler(message = "failed to fetch data")
-        viewModelScope.launch(exceptionHandler) {
-            _nameSharedFlow.emit(name)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch(exceptionHandler) {
+            delay(500)
+            val result = searchSeller(query)
+            val uiSeller = result.map { uiSellerMapper.mapToView(it) }
+            _state.value = state.value!!.copy(sellerNameSuggestions = uiSeller, isSearchingNames = false)
         }
     }
 
@@ -57,20 +57,4 @@ class SellAppleFragmentViewModel @Inject constructor(
         _state.value = state.value!!.updateToFailure(throwable)
     }
 
-    private fun setupSearchSubscription() {
-        val exceptionHandler = createExceptionHandler(message = "failed to fetch data")
-        viewModelScope.launch(exceptionHandler) {
-            searchSeller(_nameSharedFlow)
-                .collectLatest { sellers ->
-                    _state.value = state.value!!.copy(sellerNameSuggestions = sellers.map {
-                        UISeller(
-                            name = it.name,
-                            id = it.cardId,
-                            isRegistered = it.isRegistered,
-                        )
-                    })
-                }
-        }
-
-    }
 }

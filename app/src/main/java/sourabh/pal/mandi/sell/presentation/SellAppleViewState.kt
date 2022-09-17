@@ -8,6 +8,7 @@ import sourabh.pal.mandi.find.presentation.FindFalconeViewState
 
 data class SellAppleViewState(
     val isSubmitting: Boolean = false,
+    val isSearchingNames: Boolean = false,
     val sellerName: String = "",
     val loyaltyCardNumber: String = "",
     val villageName: String = "",

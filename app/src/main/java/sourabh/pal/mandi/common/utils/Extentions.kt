@@ -1,9 +1,13 @@
 package sourabh.pal.mandi.common.utils
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.core.content.res.getDrawableOrThrow
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.viewModelScope
 import androidx.viewpager2.widget.ViewPager2
@@ -34,4 +38,15 @@ inline fun CoroutineScope.createExceptionHandler(
     launch {
         action(throwable)
     }
+}
+
+fun Context.getProgressBarDrawable(): Drawable {
+    val value = TypedValue()
+    theme.resolveAttribute(android.R.attr.progressBarStyleSmall, value, false)
+    val progressBarStyle = value.data
+    val attributes = intArrayOf(android.R.attr.indeterminateDrawable)
+    val array = obtainStyledAttributes(progressBarStyle, attributes)
+    val drawable = array.getDrawableOrThrow(0)
+    array.recycle()
+    return drawable
 }
