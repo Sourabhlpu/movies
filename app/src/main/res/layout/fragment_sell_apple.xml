@@ -11,11 +11,8 @@
 
         <variable
             name="clickHandler"
-            type="sourabh.pal.mandi.find.presentation.views.FindFalconeFragment" />
+            type="sourabh.pal.mandi.sell.presentation.SellAppleFragment" />
 
-        <variable
-            name="viewModel"
-            type="sourabh.pal.mandi.find.presentation.FindFalconeFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -157,6 +154,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="20dp"
             android:textAllCaps="false"
+            android:onClick="@{() -> clickHandler.onSubmitClicked()}"
             app:layout_constraintBottom_toBottomOf="parent"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>

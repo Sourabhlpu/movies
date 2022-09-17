@@ -8,15 +8,19 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 import sourabh.pal.mandi.R
+import sourabh.pal.mandi.common.presentation.Event
 import sourabh.pal.mandi.common.utils.getProgressBarDrawable
 import sourabh.pal.mandi.databinding.FragmentSellAppleBinding
+import sourabh.pal.mandi.find.presentation.views.FindFalconeFragmentDirections
 
 @AndroidEntryPoint
 class SellAppleFragment : Fragment() {
@@ -69,6 +73,7 @@ class SellAppleFragment : Fragment() {
     }
 
     private fun setupUI() {
+        binding.clickHandler = this
         setInputFieldListeners()
         observeViewStateUpdates()
     }
@@ -87,11 +92,13 @@ class SellAppleFragment : Fragment() {
         setupValuesFor(binding.nameEt, newState.sellerNameSuggestions.map { it.name })
         setupValuesFor(binding.villageEt, newState.villages.map { it.name })
         setSearchProgress(newState)
+        handleNavigation(newState.navigateOnSuccess)
+
         binding.enterLoyaltyCardIdWidget.editText?.setText(newState.loyaltyCardNumber)
-        binding.tvLoyaltyIndex.text =
-            getString(R.string.format_loyalty_index, newState.loyaltyIndex)
+        binding.tvLoyaltyIndex.text = getString(R.string.format_loyalty_index, newState.loyaltyIndex)
         binding.tvTotalPrice.text = newState.totalPrice
         binding.btnSell.isEnabled = newState.enableSubmitButton
+        binding.loader.isVisible = newState.isSubmitting
     }
 
     private fun setSearchProgress(newState: SellAppleViewState) {
@@ -117,6 +124,21 @@ class SellAppleFragment : Fragment() {
     ) {
         inputField?.doAfterTextChanged {
             action(it?.toString().orEmpty())
+        }
+    }
+
+    fun onSubmitClicked(){
+        viewModel.onEvent(SellAppleEvent.SellProduce)
+    }
+
+    private fun handleNavigation(navigateToSuccess: Event<Triple<String, String, String>>?) {
+        if(navigateToSuccess != null){
+            val triple = navigateToSuccess.getContentIfNotHandled()
+            val sellerName = triple?.first.orEmpty()
+            val totalFormattedPrice = triple?.second.orEmpty()
+            val weightInTonnes = triple?.third.orEmpty()
+            val action =  SellAppleFragmentDirections.actionSellProduceToSuccessFragment(sellerName, totalFormattedPrice, weightInTonnes)
+            findNavController().navigate(action)
         }
     }
 

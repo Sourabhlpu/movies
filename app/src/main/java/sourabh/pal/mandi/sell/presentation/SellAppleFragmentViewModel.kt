@@ -57,7 +57,7 @@ class SellAppleFragmentViewModel @Inject constructor(
     }
 
     private fun handleSellButtonClick() {
-        _state.value = state.value!!.copy(isLoadingVillages = true)
+        _state.value = state.value!!.copy(isSubmitting = true)
         val exceptionHandler = createExceptionHandler(message = "failed to sell")
         searchJob = viewModelScope.launch(exceptionHandler) {
             val sellProduce = Sell(
@@ -68,7 +68,7 @@ class SellAppleFragmentViewModel @Inject constructor(
                 totalPrice = state.value!!.totalPrice.toDoubleOrNull() ?: 0.00
             )
             val message = sellProduceUseCase(sellProduce)
-            _state.value = state.value!!.updateToSuccess(message)
+            _state.value = state.value!!.updateToSuccess(message, selectedSeller?.name.orEmpty())
         }
     }
 

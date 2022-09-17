@@ -22,7 +22,7 @@ data class SellAppleViewState(
     val villages: List<UIVillage> = emptyList(),
     val enableSubmitButton: Boolean = false,
     val failure: Event<Throwable>? = null,
-    val navigateOnSuccess: Event<String>? = null,
+    val navigateOnSuccess: Event<Triple<String, String, String>>? = null,
 ) {
     fun updateToFailure(throwable: Throwable): SellAppleViewState {
         return copy(
@@ -73,9 +73,10 @@ data class SellAppleViewState(
         )
     }
 
-    fun updateToSuccess(message: String): SellAppleViewState{
+    fun updateToSuccess(message: String, sellerName: String): SellAppleViewState{
         return copy(
-            navigateOnSuccess = Event(message)
+            isSubmitting = false,
+            navigateOnSuccess = Event(Triple(sellerName, totalPrice, grossWeight.toString()))
         )
     }
 

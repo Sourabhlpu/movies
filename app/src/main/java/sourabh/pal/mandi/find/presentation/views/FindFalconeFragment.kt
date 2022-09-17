@@ -115,13 +115,13 @@ class FindFalconeFragment : Fragment() {
     }
 
     private fun handleNavigation(navigateToSuccess: Event<Pair<String, String>>?) {
-        if(navigateToSuccess != null){
+/*        if(navigateToSuccess != null){
             val pair = navigateToSuccess.getContentIfNotHandled()
             val planet = pair?.first.orEmpty()
             val totalTime = pair?.second.orEmpty()
             val action =  FindFalconeFragmentDirections.actionFindFalconeFragmentToSuccessFragment(planet, totalTime)
             findNavController().navigate(action)
-        }
+        }*/
     }
 
     private fun updateScreen(state: FindFalconeViewState, vehiclesAdapter: VehiclesAdapter) {

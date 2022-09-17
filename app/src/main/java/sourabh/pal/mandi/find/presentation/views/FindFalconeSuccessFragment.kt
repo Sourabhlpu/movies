@@ -14,6 +14,7 @@ import sourabh.pal.mandi.R
 import sourabh.pal.mandi.databinding.FragmentFindFalconeSuccessBinding
 import sourabh.pal.mandi.databinding.FragmentPlanetSlidePageBinding
 import sourabh.pal.mandi.find.presentation.FindFalconeFragmentViewModel
+import sourabh.pal.mandi.sell.presentation.SellAppleFragmentDirections
 
 
 class FindFalconeSuccessFragment : Fragment() {
@@ -41,6 +42,11 @@ class FindFalconeSuccessFragment : Fragment() {
 
         binding.tvThanks.text = thankYouMessage
         binding.tvEnsure.text = subSuccessMessage
+
+        binding.btnSellMore.setOnClickListener {
+            val action =  FindFalconeSuccessFragmentDirections.actionSuccessFragmentToFindFalconeFragment()
+            findNavController().navigate(action)
+        }
     }
 
 }

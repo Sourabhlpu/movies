@@ -4,6 +4,7 @@ import sourabh.pal.mandi.common.domain.NetworkException
 import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.mandi.common.domain.model.Village
 import sourabh.pal.mandi.common.domain.model.planets.Planet
+import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.domain.model.seller.Seller
 import sourabh.pal.mandi.common.domain.model.vehicles.Vehicle
 import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
@@ -105,6 +106,10 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
 
     override suspend fun getVillages(): List<Village> {
         return emptyList()
+    }
+
+    override suspend fun sellProduce(sellApple: Sell): String {
+        return ""
     }
 
     override fun getLocalToken(): String {
