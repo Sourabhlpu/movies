@@ -17,6 +17,6 @@
     <string name="gross_weight">Gross Weight</string>
     <string name="tonnes">Tonnes</string>
     <string name="gross_price">Gross Price</string>
-    <string name="format_loyalty_index">Applied loyalty index: %1$d</string>
+    <string name="format_loyalty_index">Applied loyalty index: %.2f</string>
     <string name="sell_my_produce">Sell My Produce</string>
 </resources>

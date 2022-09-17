@@ -9,7 +9,8 @@ class UISellerMapper @Inject constructor(): UiMapper<Seller, UISeller> {
         return UISeller(
             name = input.name,
             id = input.cardId,
-            isRegistered = input.isRegistered
+            isRegistered = input.isRegistered,
+            loyaltyIndex = input.loyaltyIndex
         )
     }
 }

@@ -1,4 +1,4 @@
-package sourabh.pal.mandi.sell.domain
+package sourabh.pal.mandi.sell.domain.usecase
 
 import android.util.Log
 import kotlinx.coroutines.flow.*

@@ -50,3 +50,7 @@ fun Context.getProgressBarDrawable(): Drawable {
     array.recycle()
     return drawable
 }
+
+fun Double.toKg(): Double{
+    return this * 1016.04691
+}

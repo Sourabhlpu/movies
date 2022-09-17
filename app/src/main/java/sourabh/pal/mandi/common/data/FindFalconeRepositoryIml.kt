@@ -10,15 +10,14 @@ import sourabh.pal.mandi.common.data.api.FindFalconeApi
 import sourabh.pal.mandi.common.data.api.model.ApiFindFalconeRequest
 import sourabh.pal.mandi.common.data.api.model.ApiSearchSellerResponse
 import sourabh.pal.mandi.common.data.api.model.ApiSeller
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiFindFalconeResponseMapper
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiPlanetMapper
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiSellerMapper
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiVehicleMapper
+import sourabh.pal.mandi.common.data.api.model.ApiVillage
+import sourabh.pal.mandi.common.data.api.model.mappers.*
 import sourabh.pal.mandi.common.data.preferences.Preferences
 import sourabh.pal.mandi.common.domain.FalconeNotFound
 import sourabh.pal.mandi.common.domain.NetworkException
 import sourabh.pal.mandi.common.domain.NoTokenToFindFalcone
 import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
+import sourabh.pal.mandi.common.domain.model.Village
 import sourabh.pal.mandi.common.domain.model.planets.Planet
 import sourabh.pal.mandi.common.domain.model.seller.Seller
 import sourabh.pal.mandi.common.domain.model.vehicles.Vehicle
@@ -41,11 +40,26 @@ val sellers = listOf(
     ApiSeller("Gautam", id = "C1241"),
 )
 
+val villages = listOf(
+    ApiVillage("Johari", price = 100.12),
+    ApiVillage("Sinola", price = 90.34),
+    ApiVillage("Malsi", price = 81.22),
+    ApiVillage("Guniyal", price = 78.42),
+    ApiVillage("Purkul", price = 93.32),
+    ApiVillage("Anarwala", price = 87.32),
+    ApiVillage("Jakhan", price = 78.23),
+    ApiVillage("Salan", price = 120.00),
+    ApiVillage("Galjwadi", price = 150.33),
+    ApiVillage("Kolukeht", price = 200.77),
+    ApiVillage("Kimadi", price = 150.77),
+)
+
 class FindFalconeRepositoryIml @Inject constructor(
     private val api: FindFalconeApi,
     private val apiVehicleMapper: ApiVehicleMapper,
     private val apiPlanetMapper: ApiPlanetMapper,
     private val apiSellerMapper: ApiSellerMapper,
+    private val apiVillageMapper: ApiVillageMapper,
     private val apiFindFalconeResponseMapper: ApiFindFalconeResponseMapper,
     private val preferences: Preferences,
     private val ioDispatcher: DispatchersProvider
@@ -106,11 +120,8 @@ class FindFalconeRepositoryIml @Inject constructor(
     override suspend fun searchSellersByName(query: String): List<Seller> {
         return try {
             withContext(ioDispatcher.io()) {
-                //val response = api.searchSellers(query)
-                Log.d("test query", query)
                 delay(500)
-                val filteredSellers = sellers.filter { it.name.orEmpty().startsWith(query, true)}
-                Log.d("test filter", filteredSellers.toString())
+                val filteredSellers = sellers.filter { it.name.orEmpty().startsWith(query, true) }
                 filteredSellers.map { apiSellerMapper.mapToDomain(it) }
             }
         } catch (exception: HttpException) {
@@ -118,4 +129,14 @@ class FindFalconeRepositoryIml @Inject constructor(
         }
     }
 
+    override suspend fun getVillages(): List<Village> {
+        return try {
+            withContext(ioDispatcher.io()) {
+                delay(500)
+                villages.map { apiVillageMapper.mapToDomain(it) }
+            }
+        } catch (exception: HttpException) {
+            throw NetworkException(exception.message() ?: "Code ${exception.code()}")
+        }
+    }
 }
