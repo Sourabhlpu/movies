@@ -136,11 +136,11 @@ class FakeRepository @Inject constructor() : FindFalconeRepository {
     }
 
     override suspend fun searchSellersByName(query: String): List<Seller> {
-        return sellers.filter { it.name.startsWith(query, true) }
+        return if(isHappyPath) sellers.filter { it.name.startsWith(query, true) } else emptyList()
     }
 
     override suspend fun getVillages(): List<Village> {
-        return villages
+        return if(isHappyPath) villages else throw NetworkException("Network Exception")
     }
 
     override suspend fun sellProduce(sellApple: Sell): String {
