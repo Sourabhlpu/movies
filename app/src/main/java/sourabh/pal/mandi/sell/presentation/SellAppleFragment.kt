@@ -20,7 +20,6 @@ import sourabh.pal.mandi.R
 import sourabh.pal.mandi.common.presentation.Event
 import sourabh.pal.mandi.common.utils.getProgressBarDrawable
 import sourabh.pal.mandi.databinding.FragmentSellAppleBinding
-import sourabh.pal.mandi.find.presentation.views.FindFalconeFragmentDirections
 
 @AndroidEntryPoint
 class SellAppleFragment : Fragment() {

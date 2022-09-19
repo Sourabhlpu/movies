@@ -5,7 +5,6 @@ import sourabh.pal.mandi.common.domain.model.seller.DEFAULT_LOYALTY_INDEX
 import sourabh.pal.mandi.common.presentation.Event
 import sourabh.pal.mandi.common.presentation.model.UISeller
 import sourabh.pal.mandi.common.presentation.model.UIVillage
-import sourabh.pal.mandi.find.presentation.FindFalconeViewState
 
 data class SellAppleViewState(
     val isSubmitting: Boolean = false,

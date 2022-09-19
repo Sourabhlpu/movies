@@ -6,21 +6,12 @@
     app:startDestination="@id/sellAppleFragment">
 
 
-    <fragment
-        android:id="@+id/find_falcone_fragment"
-        android:name="sourabh.pal.mandi.find.presentation.views.FindFalconeFragment"
-        android:label="@string/find_falcone_fragment_label"
-        tools:layout="@layout/fragment_find_falcone">
-        <action
-            android:id="@+id/action_FindFalconeFragment_to_SuccessFragment"
-            app:destination="@id/success_fragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/success_fragment"
-        android:name="sourabh.pal.mandi.find.presentation.views.FindFalconeSuccessFragment"
-        android:label="@string/falcone_found"
-        tools:layout="@layout/fragment_find_falcone_success">
+        android:name="sourabh.pal.mandi.sell.presentation.SuccessFragment"
+        android:label="@string/produce_sold"
+        tools:layout="@layout/fragment_success">
         <argument
             android:name="sellerName"
             app:argType="string"
@@ -32,7 +23,7 @@
             android:name="totalWeight"
             app:argType="string"/>
         <action
-            android:id="@+id/action_SuccessFragment_to_FindFalconeFragment"
+            android:id="@+id/action_SuccessFragment_to_SellAppleFragment"
             app:popUpTo="@id/sellAppleFragment"
             app:destination="@id/sellAppleFragment"
             app:popUpToSaveState="true"

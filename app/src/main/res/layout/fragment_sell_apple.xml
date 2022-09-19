@@ -4,15 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <import type="sourabh.pal.mandi.common.presentation.model.mappers.UiPlanetToStringMapper" />
-
         <import type="android.view.View" />
-
         <variable
             name="clickHandler"
             type="sourabh.pal.mandi.sell.presentation.SellAppleFragment" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

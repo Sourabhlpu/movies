@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Mandi</string>
 
-    <string name="find_falcone_fragment_label">Find Falcone Fragment</string>
-    <string name="falcone_found">Falcone Found</string>
+
     <string name="an_error_occurred">An error occurred. Please try again later.</string>
     <string name="format_quantity">(%s)</string>
     <string name="submit">Submit</string>
@@ -22,4 +21,5 @@
     <string name="sell_more">Sell More</string>
     <string name="format_success_message">Thank you %s for selling your quality produce.</string>
     <string name="format_message_ensure">Please ensure you received %1s for %2s Tonnes of your produce.</string>
+    <string name="produce_sold">Produce Sold</string>
 </resources>
