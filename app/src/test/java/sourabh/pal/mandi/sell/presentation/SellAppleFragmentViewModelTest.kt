@@ -150,4 +150,10 @@ class SellAppleFragmentViewModelTest {
         val viewState = viewModel.state.value!!
         assertThat(viewState).isEqualTo(expectedViewState)
     }
+
+    @Test
+    fun `SellAppleFragmentViewModel onNameCleared`() = testCoroutineRule.runBlockingTest {
+        //Given
+
+    }
 }

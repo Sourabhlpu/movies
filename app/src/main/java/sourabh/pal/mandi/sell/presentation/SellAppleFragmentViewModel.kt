@@ -10,9 +10,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sourabh.pal.mandi.common.domain.model.sell.Sell
-import sourabh.pal.mandi.common.domain.model.seller.DEFAULT_LOYALTY_INDEX
-import sourabh.pal.mandi.common.presentation.model.UISeller
-import sourabh.pal.mandi.common.presentation.model.UIVillage
 import sourabh.pal.mandi.common.presentation.model.mappers.UISellerMapper
 import sourabh.pal.mandi.common.presentation.model.mappers.UIVillageMapper
 import sourabh.pal.mandi.common.utils.createExceptionHandler
@@ -36,8 +33,7 @@ class SellAppleFragmentViewModel @Inject constructor(
     private val _state = MutableLiveData<SellAppleViewState>()
 
     private var searchJob: Job? = null
-    private var selectedSeller: UISeller? = null
-    private var selectedVillage: UIVillage? = null
+
 
     init {
         _state.value = SellAppleViewState()
@@ -60,6 +56,8 @@ class SellAppleFragmentViewModel @Inject constructor(
         _state.value = state.value!!.copy(isSubmitting = true)
         val exceptionHandler = createExceptionHandler(message = "failed to sell")
         searchJob = viewModelScope.launch(exceptionHandler) {
+            val selectedSeller = state.value!!.selectedSeller
+            val selectedVillage = state.value!!.selectedVillage
             val sellProduce = Sell(
                 sellerName = selectedSeller?.name.orEmpty(),
                 loyaltyId = selectedSeller?.id.orEmpty(),
@@ -73,13 +71,12 @@ class SellAppleFragmentViewModel @Inject constructor(
     }
 
     private fun handleClearName() {
-        selectedSeller = null
-        _state.value = state.value!!.resetSeller(enableSubmitButton())
+        _state.value = state.value!!.resetSeller()
         updateTotalPrice()
     }
 
     private fun handleVillageNameUpdate(name: String) {
-        selectedVillage = state.value!!.villages.find { it.name.equals(name, true) }
+        _state.value = state.value!!.updateVillageName(name)
         updateTotalPrice()
     }
 
@@ -89,13 +86,13 @@ class SellAppleFragmentViewModel @Inject constructor(
     }
 
     private fun updateTotalPrice() {
-        _state.value = state.value!!.updateTotalPrice(getUpdatedPrice(), enableSubmitButton())
+        _state.value = state.value!!.updateTotalPrice(getUpdatedPrice())
     }
 
     private fun getUpdatedPrice(): String {
         return getApplePrice(
             loyaltyIndex = state.value!!.loyaltyIndex,
-            pricePerKg = selectedVillage?.pricePerKgApple ?: 0.00,
+            pricePerKg = state.value!!.selectedVillage?.pricePerKgApple ?: 0.00,
             weightInTonnes = state.value!!.grossWeight
         )
     }
@@ -113,21 +110,13 @@ class SellAppleFragmentViewModel @Inject constructor(
     private fun handleLoyaltyCardIdUpdate(id: String) {}
 
     private fun handleOnNameSubmit(event: SellAppleEvent.OnSubmitName) {
-        val currentState = _state.value!!
-        searchJob?.cancel()
-        selectedSeller = currentState.sellerNameSuggestions.find {
-            it.name.equals(event.name, true)
-        }
-        val id = selectedSeller?.id.orEmpty()
-        val loyaltyIndex = selectedSeller?.loyaltyIndex ?: DEFAULT_LOYALTY_INDEX
-        _state.value = currentState.updateToNameSubmitted(id, loyaltyIndex, enableSubmitButton())
+        _state.value = _state.value!!.updateToNameSubmitted(event.name)
         updateTotalPrice()
     }
 
     private fun onSellerNameUpdate(query: String) {
         if (query.isEmpty())
             return
-        selectedSeller = null
         _state.value = state.value!!.updateToSearchingNames()
         val exceptionHandler = createExceptionHandler(message = "failed to fetch data")
         searchJob?.cancel()
@@ -135,7 +124,7 @@ class SellAppleFragmentViewModel @Inject constructor(
             delay(500)
             val result = searchSeller(query)
             val uiSeller = result.map { uiSellerMapper.mapToView(it) }
-            _state.value = state.value!!.updateToSellerNameUpdate(uiSeller, enableSubmitButton())
+            _state.value = state.value!!.updateToSellerNameUpdate(uiSeller)
         }
     }
 
@@ -149,8 +138,5 @@ class SellAppleFragmentViewModel @Inject constructor(
         _state.value = state.value!!.updateToFailure(throwable)
     }
 
-    private fun enableSubmitButton(): Boolean {
-        return selectedSeller != null && selectedVillage != null && state.value!!.grossWeight > 0.0
-    }
 
 }

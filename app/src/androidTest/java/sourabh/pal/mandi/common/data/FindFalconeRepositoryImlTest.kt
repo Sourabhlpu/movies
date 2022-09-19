@@ -12,27 +12,20 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.notNull
-import retrofit2.HttpException
 import retrofit2.Retrofit
-import sourabh.pal.mandi.common.data.api.FindFalconeApi
-import sourabh.pal.mandi.common.data.api.model.ApiFindFalconeRespone
+import sourabh.pal.mandi.common.data.api.MandiApi
 import sourabh.pal.mandi.common.data.api.model.mappers.*
 import sourabh.pal.mandi.common.data.api.utils.FakeServer
-import sourabh.pal.mandi.common.data.di.PreferencesModule
 import sourabh.pal.mandi.common.data.preferences.FakePreferences
 import sourabh.pal.mandi.common.data.preferences.Preferences
 import sourabh.pal.mandi.common.domain.FalconeNotFound
 import sourabh.pal.mandi.common.domain.NetworkException
 import sourabh.pal.mandi.common.domain.NoTokenToFindFalcone
-import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.mandi.common.domain.model.planets.Planet
 import sourabh.pal.mandi.common.domain.model.seller.Seller
-import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
+import sourabh.pal.mandi.common.domain.repositories.MandiRepository
 import sourabh.pal.mandi.common.utils.DispatchersProvider
 import javax.inject.Inject
-import kotlin.math.exp
 import kotlin.test.assertFailsWith
 
 
@@ -41,8 +34,8 @@ import kotlin.test.assertFailsWith
 class FindFalconeRepositoryImlTest {
 
     private val fakeServer = FakeServer()
-    private lateinit var repository: FindFalconeRepository
-    private lateinit var api: FindFalconeApi
+    private lateinit var repository: MandiRepository
+    private lateinit var api: MandiApi
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
@@ -84,7 +77,7 @@ class FindFalconeRepositoryImlTest {
         api = retrofitBuilder
             .baseUrl(fakeServer.baseEndpoint)
             .build()
-            .create(FindFalconeApi::class.java)
+            .create(MandiApi::class.java)
 
         repository = FindFalconeRepositoryIml(
             api,

@@ -17,7 +17,8 @@ data class SellAppleViewState(
     val grossWeight: Double = 0.0,
     val loyaltyIndex: Double = DEFAULT_LOYALTY_INDEX,
     val totalPrice: String = "0.00",
-    val currency: String = "",
+    val selectedSeller: UISeller? = null,
+    val selectedVillage: UIVillage? = null,
     val sellerNameSuggestions: List<UISeller> = emptyList(),
     val villages: List<UIVillage> = emptyList(),
     val enableSubmitButton: Boolean = false,
@@ -33,21 +34,25 @@ data class SellAppleViewState(
 
     fun updateToSearchingNames(): SellAppleViewState {
         return copy(
-            isSearchingNames = true, loyaltyCardNumber = "", loyaltyIndex = DEFAULT_LOYALTY_INDEX
+            isSearchingNames = true, loyaltyCardNumber = "", loyaltyIndex = DEFAULT_LOYALTY_INDEX, selectedSeller = null
         )
     }
 
-    fun resetSeller(enableButton: Boolean): SellAppleViewState {
+    fun resetSeller(): SellAppleViewState {
         return copy(
-            loyaltyIndex = DEFAULT_LOYALTY_INDEX, sellerName = "", loyaltyCardNumber = "", enableSubmitButton = enableButton
+            loyaltyIndex = DEFAULT_LOYALTY_INDEX,
+            sellerName = "",
+            loyaltyCardNumber = "",
+            enableSubmitButton = enableSubmitButton(),
+            selectedSeller = null
         )
     }
 
-    fun updateTotalPrice(totalPrice: String, enableButton: Boolean): SellAppleViewState {
+    fun updateTotalPrice(totalPrice: String): SellAppleViewState {
         return copy(
             totalPrice = totalPrice,
             grossWeight = grossWeight,
-            enableSubmitButton = enableButton
+            enableSubmitButton = enableSubmitButton()
         )
     }
 
@@ -58,26 +63,44 @@ data class SellAppleViewState(
         )
     }
 
-    fun updateToNameSubmitted(id: String, loyaltyIndex: Double, enableButton: Boolean): SellAppleViewState {
+    fun updateToNameSubmitted(name: String): SellAppleViewState {
+        val seller = sellerNameSuggestions.find { it.name.equals(name, true) }
         return copy(
-            loyaltyCardNumber = id,
+            loyaltyCardNumber = seller?.id.orEmpty(),
             isSearchingNames = false,
-            loyaltyIndex = loyaltyIndex,
-            enableSubmitButton = enableButton
+            loyaltyIndex = seller?.loyaltyIndex ?: 0.0,
+            enableSubmitButton = enableSubmitButton(),
+            selectedSeller = seller
         )
     }
 
-    fun updateToSellerNameUpdate( suggestions: List<UISeller>, enableButton: Boolean): SellAppleViewState {
+    fun updateToSellerNameUpdate(
+        suggestions: List<UISeller>
+    ): SellAppleViewState {
         return copy(
-            sellerNameSuggestions = suggestions, isSearchingNames = false, enableSubmitButton = enableButton
+            sellerNameSuggestions = suggestions,
+            isSearchingNames = false,
+            enableSubmitButton = enableSubmitButton()
         )
     }
 
-    fun updateToSuccess(message: String, sellerName: String): SellAppleViewState{
+    fun updateToSuccess(message: String, sellerName: String): SellAppleViewState {
         return copy(
             isSubmitting = false,
             navigateOnSuccess = Event(Triple(sellerName, totalPrice, grossWeight.toString()))
         )
     }
+
+    fun updateVillageName(name: String): SellAppleViewState? {
+        val village = villages.find { it.name.equals(name, true) }
+        return copy(
+            selectedVillage = village
+        )
+
+    }
+
+    fun enableSubmitButton() =
+        selectedSeller != null && selectedVillage != null && grossWeight > 0.0
+
 
 }

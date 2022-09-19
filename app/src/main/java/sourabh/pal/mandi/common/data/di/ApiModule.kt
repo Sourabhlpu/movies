@@ -9,7 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import sourabh.pal.mandi.common.data.api.ApiConstants
-import sourabh.pal.mandi.common.data.api.FindFalconeApi
+import sourabh.pal.mandi.common.data.api.MandiApi
 import sourabh.pal.mandi.common.data.api.interceptors.NetworkStatusInterceptor
 import javax.inject.Singleton
 
@@ -19,10 +19,10 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideApi(builder: Retrofit.Builder): FindFalconeApi {
+    fun provideApi(builder: Retrofit.Builder): MandiApi {
         return builder
             .build()
-            .create(FindFalconeApi::class.java)
+            .create(MandiApi::class.java)
     }
 
     @Provides

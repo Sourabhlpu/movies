@@ -7,7 +7,7 @@ import sourabh.pal.mandi.common.data.api.model.mappers.ApiSellerMapper
 import sourabh.pal.mandi.common.domain.model.seller.Seller
 
 
-interface FindFalconeApi {
+interface MandiApi {
 
     @GET(ApiConstants.VEHICLES_ENDPOINT)
     suspend fun getAllVehicles(): List<ApiVehicle>

@@ -9,8 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Rule
 import org.junit.Test
 import sourabh.pal.mandi.TestCoroutineRule
-import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
-import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
+import sourabh.pal.mandi.common.domain.repositories.MandiRepository
 import sourabh.pal.mandi.find.domain.usecases.FindFalconeUsecase
 
 @ExperimentalCoroutinesApi
@@ -26,7 +25,7 @@ class FindFalconeUsecaseTest{
     @Test
     fun whenLocalTokenExists_returnPlanet() = testCoroutineRule.runBlockingTest{
         //Given
-        val repository = mock<FindFalconeRepository>()
+        val repository = mock<MandiRepository>()
         val vehiclesAndPlanets = VehiclesAndPlanets(emptyList(), emptyList())
         val token = "aif2309z4920342"
         whenever(repository.getLocalToken()).thenReturn(token)
@@ -41,7 +40,7 @@ class FindFalconeUsecaseTest{
     @Test
     fun whenLocalDoesNotTokenExist_returnPlanet() = testCoroutineRule.runBlockingTest{
         //Given
-        val repository = mock<FindFalconeRepository>()
+        val repository = mock<MandiRepository>()
         val vehiclesAndPlanets = VehiclesAndPlanets(emptyList(), emptyList())
         whenever(repository.getLocalToken()).thenReturn("")
 

@@ -1,12 +1,10 @@
 package sourabh.pal.mandi.sell.domain.usecase
 
-import android.util.Log
-import kotlinx.coroutines.flow.*
 import sourabh.pal.mandi.common.domain.model.seller.Seller
-import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
+import sourabh.pal.mandi.common.domain.repositories.MandiRepository
 import javax.inject.Inject
 
-class SearchSellerUseCase @Inject constructor(private val repository: FindFalconeRepository) {
+class SearchSellerUseCase @Inject constructor(private val repository: MandiRepository) {
 
     suspend operator fun invoke(query: String): List<Seller> {
         return repository.searchSellersByName(query)

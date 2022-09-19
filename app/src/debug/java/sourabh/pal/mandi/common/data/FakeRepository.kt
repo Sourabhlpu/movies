@@ -1,20 +1,15 @@
 package sourabh.pal.mandi.common.data
 
-import sourabh.pal.mandi.common.data.api.model.ApiSeller
-import sourabh.pal.mandi.common.data.api.model.ApiVillage
 import sourabh.pal.mandi.common.domain.NetworkException
-import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.mandi.common.domain.model.Village
 import sourabh.pal.mandi.common.domain.model.planets.Planet
 import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.domain.model.seller.Seller
 import sourabh.pal.mandi.common.domain.model.vehicles.Vehicle
-import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
-import sourabh.pal.mandi.common.presentation.model.UIPlanet
-import sourabh.pal.mandi.common.presentation.model.UIVehicle
+import sourabh.pal.mandi.common.domain.repositories.MandiRepository
 import javax.inject.Inject
 
-class FakeRepository @Inject constructor() : FindFalconeRepository {
+class FakeRepository @Inject constructor() : MandiRepository {
 
     var isHappyPath = true
     var sendFullList = false

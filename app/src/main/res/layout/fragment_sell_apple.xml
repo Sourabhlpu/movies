@@ -38,13 +38,17 @@
                 android:hint="@string/name"
                 app:endIconMode="clear_text"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                android:imeOptions="actionNext">
 
                 <AutoCompleteTextView
                     android:id="@+id/name_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:completionThreshold="1"/>
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"
+                    android:imeOptions="actionNext"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -55,13 +59,17 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/loyaltyCardIdentifier"
                 app:endIconMode="clear_text"
+                android:imeOptions="actionNext"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/enter_name_widget"
                 android:layout_marginTop="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,7 +87,10 @@
                     android:id="@+id/village_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"/>
+                    android:inputType="none"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -92,13 +103,17 @@
                 app:suffixText="@string/tonnes"
                 android:layout_marginTop="16dp"
                 app:endIconMode="clear_text"
+                android:imeOptions="actionDone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/enter_village_widget">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"/>
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:singleLine="true"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -152,7 +167,7 @@
             android:layout_height="wrap_content"
             android:text="@string/sell_my_produce"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="8dp"
             android:textAllCaps="false"
             android:onClick="@{() -> clickHandler.onSubmitClicked()}"
             app:layout_constraintBottom_toBottomOf="parent"
