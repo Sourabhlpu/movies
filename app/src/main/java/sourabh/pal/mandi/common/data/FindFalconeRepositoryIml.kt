@@ -49,6 +49,10 @@ val villages = listOf(
 
 class FindFalconeRepositoryIml @Inject constructor(
     private val api: MandiApi,
+    private val apiSellerMapper: ApiSellerMapper,
+    private val apiVillageMapper: ApiVillageMapper,
+    private val apiFindFalconeResponseMapper: ApiFindFalconeResponseMapper,
+    private val preferences: Preferences,
     private val ioDispatcher: DispatchersProvider
 ) : MandiRepository {
     override suspend fun searchSellersByName(query: String): List<Seller> {
