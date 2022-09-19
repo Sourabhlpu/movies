@@ -3,14 +3,12 @@ package sourabh.pal.mandi.common.data
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import sourabh.pal.mandi.common.data.api.ApiConstants
 import sourabh.pal.mandi.common.data.api.MandiApi
 import sourabh.pal.mandi.common.data.api.model.ApiSeller
 import sourabh.pal.mandi.common.data.api.model.ApiVillage
-import sourabh.pal.mandi.common.data.api.model.mappers.*
-import sourabh.pal.mandi.common.domain.FalconeNotFound
+import sourabh.pal.mandi.common.data.api.model.mappers.ApiSellerMapper
+import sourabh.pal.mandi.common.data.api.model.mappers.ApiVillageMapper
 import sourabh.pal.mandi.common.domain.NetworkException
-import sourabh.pal.mandi.common.domain.NoTokenToFindFalcone
 import sourabh.pal.mandi.common.domain.model.Village
 import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.domain.model.seller.Seller
@@ -51,10 +49,9 @@ class FindFalconeRepositoryIml @Inject constructor(
     private val api: MandiApi,
     private val apiSellerMapper: ApiSellerMapper,
     private val apiVillageMapper: ApiVillageMapper,
-    private val apiFindFalconeResponseMapper: ApiFindFalconeResponseMapper,
-    private val preferences: Preferences,
     private val ioDispatcher: DispatchersProvider
 ) : MandiRepository {
+
     override suspend fun searchSellersByName(query: String): List<Seller> {
         return try {
             withContext(ioDispatcher.io()) {

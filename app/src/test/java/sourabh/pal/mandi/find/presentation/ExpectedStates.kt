@@ -1,7 +1,6 @@
 package sourabh.pal.mandi.find.presentation
 
 import sourabh.pal.mandi.common.presentation.Event
-import sourabh.pal.mandi.common.presentation.model.UIPlanet
 import sourabh.pal.mandi.common.presentation.model.UIVehicle
 import sourabh.pal.mandi.common.presentation.model.UIVehicleWitDetails
 
