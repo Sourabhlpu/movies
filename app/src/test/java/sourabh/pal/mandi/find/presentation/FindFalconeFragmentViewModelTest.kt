@@ -1,4 +1,4 @@
-package sourabh.pal.findfalcone.find.presentation
+package sourabh.pal.mandi.find.presentation
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
@@ -6,18 +6,18 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import sourabh.pal.findfalcone.TestCoroutineRule
-import sourabh.pal.findfalcone.common.data.FakeRepository
-import sourabh.pal.findfalcone.common.domain.NetworkException
-import sourabh.pal.findfalcone.common.presentation.Event
-import sourabh.pal.findfalcone.common.presentation.model.UIPlanet
-import sourabh.pal.findfalcone.common.presentation.model.UIVehicle
-import sourabh.pal.findfalcone.common.presentation.model.UIVehicleWitDetails
-import sourabh.pal.findfalcone.common.presentation.model.mappers.UIPlanetMapper
-import sourabh.pal.findfalcone.common.presentation.model.mappers.UIVehicleMapper
-import sourabh.pal.findfalcone.find.domain.usecases.FindFalconeUsecase
-import sourabh.pal.findfalcone.find.domain.usecases.GetPlanets
-import sourabh.pal.findfalcone.find.domain.usecases.GetVehicles
+import sourabh.pal.mandi.TestCoroutineRule
+import sourabh.pal.mandi.common.data.FakeRepository
+import sourabh.pal.mandi.common.domain.NetworkException
+import sourabh.pal.mandi.common.presentation.Event
+import sourabh.pal.mandi.common.presentation.model.UIPlanet
+import sourabh.pal.mandi.common.presentation.model.UIVehicle
+import sourabh.pal.mandi.common.presentation.model.UIVehicleWitDetails
+import sourabh.pal.mandi.common.presentation.model.mappers.UIPlanetMapper
+import sourabh.pal.mandi.common.presentation.model.mappers.UIVehicleMapper
+import sourabh.pal.mandi.find.domain.usecases.FindFalconeUsecase
+import sourabh.pal.mandi.find.domain.usecases.GetPlanets
+import sourabh.pal.mandi.find.domain.usecases.GetVehicles
 
 @ExperimentalCoroutinesApi
 class FindFalconeFragmentViewModelTest {

@@ -18,9 +18,7 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import sourabh.pal.mandi.common.data.api.FindFalconeApi
 import sourabh.pal.mandi.common.data.api.model.ApiFindFalconeRespone
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiFindFalconeResponseMapper
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiPlanetMapper
-import sourabh.pal.mandi.common.data.api.model.mappers.ApiVehicleMapper
+import sourabh.pal.mandi.common.data.api.model.mappers.*
 import sourabh.pal.mandi.common.data.api.utils.FakeServer
 import sourabh.pal.mandi.common.data.di.PreferencesModule
 import sourabh.pal.mandi.common.data.preferences.FakePreferences
@@ -30,6 +28,7 @@ import sourabh.pal.mandi.common.domain.NetworkException
 import sourabh.pal.mandi.common.domain.NoTokenToFindFalcone
 import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
 import sourabh.pal.mandi.common.domain.model.planets.Planet
+import sourabh.pal.mandi.common.domain.model.seller.Seller
 import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
 import sourabh.pal.mandi.common.utils.DispatchersProvider
 import javax.inject.Inject
@@ -63,6 +62,12 @@ class FindFalconeRepositoryImlTest {
     @Inject
     lateinit var apiFindFalcomeMapper: ApiFindFalconeResponseMapper
 
+    @Inject
+    lateinit var apiSellerMapper: ApiSellerMapper
+
+    @Inject
+    lateinit var apiVillageMapper: ApiVillageMapper
+
     @BindValue
     @JvmField
     val preferences: Preferences = FakePreferences()
@@ -85,6 +90,8 @@ class FindFalconeRepositoryImlTest {
             api,
             apiVehicleMapper,
             apiPlanetMapper,
+            apiSellerMapper,
+            apiVillageMapper,
             apiFindFalcomeMapper,
             preferences,
             dispatchersProvider
@@ -208,6 +215,20 @@ class FindFalconeRepositoryImlTest {
             }
         }
         assertThat(exception).isInstanceOf(NoTokenToFindFalcone::class.java)
+    }
+
+    @Test
+    fun searchSeller_success() = runBlocking{
+        val expectedResult = listOf(Seller(name = "Sourabh", cardId = "A1221", isRegistered = true ))
+        val response = repository.searchSellersByName("sou")
+        assertThat(response).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun searchSeller_notFound() = runBlocking{
+        val expectedResult = emptyList<Seller>()
+        val response = repository.searchSellersByName("xz")
+        assertThat(response).isEqualTo(expectedResult)
     }
 
     @After

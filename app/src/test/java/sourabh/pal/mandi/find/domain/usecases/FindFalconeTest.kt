@@ -8,9 +8,10 @@ import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Rule
 import org.junit.Test
-import sourabh.pal.findfalcone.TestCoroutineRule
-import sourabh.pal.findfalcone.common.domain.model.VehiclesAndPlanets
-import sourabh.pal.findfalcone.common.domain.repositories.FindFalconeRepository
+import sourabh.pal.mandi.TestCoroutineRule
+import sourabh.pal.mandi.common.domain.model.VehiclesAndPlanets
+import sourabh.pal.mandi.common.domain.repositories.FindFalconeRepository
+import sourabh.pal.mandi.find.domain.usecases.FindFalconeUsecase
 
 @ExperimentalCoroutinesApi
 class FindFalconeUsecaseTest{
