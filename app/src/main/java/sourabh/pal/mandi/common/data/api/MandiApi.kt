@@ -10,4 +10,7 @@ import sourabh.pal.mandi.common.domain.model.seller.Seller
 interface MandiApi {
     @GET(ApiConstants.SELLERS_ENDPOINT)
     suspend fun searchSellers(@Query(ApiParameters.NAME) name: String): ApiSearchSellerResponse
+
+    @GET(ApiConstants.GET_VILLAGES)
+    suspend fun getVillages(): List<ApiVillage>
 }

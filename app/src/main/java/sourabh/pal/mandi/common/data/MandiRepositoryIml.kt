@@ -45,7 +45,7 @@ val villages = listOf(
     ApiVillage("Kimadi", price = 150.77),
 )
 
-class FindFalconeRepositoryIml @Inject constructor(
+class MandiRepositoryIml @Inject constructor(
     private val api: MandiApi,
     private val apiSellerMapper: ApiSellerMapper,
     private val apiVillageMapper: ApiVillageMapper,

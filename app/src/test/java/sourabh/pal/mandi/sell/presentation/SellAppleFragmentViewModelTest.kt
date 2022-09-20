@@ -23,6 +23,7 @@ import sourabh.pal.mandi.sell.domain.usecase.SellProduceUseCase
 
 @ExperimentalCoroutinesApi
 class SellAppleFragmentViewModelTest {
+
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 

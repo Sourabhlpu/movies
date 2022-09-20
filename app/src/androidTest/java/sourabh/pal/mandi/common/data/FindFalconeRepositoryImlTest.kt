@@ -58,7 +58,7 @@ class MandiRepositoryImlTest {
             .build()
             .create(MandiApi::class.java)
 
-        repository = FindFalconeRepositoryIml(
+        repository = MandiRepositoryIml(
             api,
             apiSellerMapper,
             apiVillageMapper,
