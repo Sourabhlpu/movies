@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import retrofit2.http.*
 import sourabh.pal.mandi.common.data.api.model.*
 import sourabh.pal.mandi.common.data.api.model.mappers.ApiSellerMapper
+import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.domain.model.seller.Seller
 
 
@@ -13,4 +14,7 @@ interface MandiApi {
 
     @GET(ApiConstants.GET_VILLAGES)
     suspend fun getVillages(): List<ApiVillage>
+
+    @POST(ApiConstants.SELL_PRODUCE)
+    suspend fun sellProduce(produce: Sell): String
 }

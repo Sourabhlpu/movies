@@ -4,6 +4,7 @@ object ApiConstants {
   const val AUTH_ENDPOINT = "token"
   const val SELLERS_ENDPOINT = "sellers"
   const val GET_VILLAGES = "villages"
+  const val SELL_PRODUCE = "sell"
 }
 
 object ApiParameters {

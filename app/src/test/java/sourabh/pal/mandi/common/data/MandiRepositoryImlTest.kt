@@ -2,6 +2,7 @@ package sourabh.pal.mandi.common.data
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,7 @@ import sourabh.pal.mandi.common.data.api.model.mappers.ApiSellerMapper
 import sourabh.pal.mandi.common.data.api.model.mappers.ApiVillageMapper
 import sourabh.pal.mandi.common.domain.NetworkException
 import sourabh.pal.mandi.common.domain.model.Village
+import sourabh.pal.mandi.common.domain.model.sell.Sell
 import sourabh.pal.mandi.common.utils.DispatchersProvider
 import java.net.HttpRetryException
 
@@ -112,6 +114,19 @@ class MandiRepositoryImlTest {
     fun `MandiRepository getVillages failure`() = testCoroutineRule.runBlockingTest {
         whenever(mandiApi.getVillages()).thenThrow(Exception())
         repository.getVillages()
+    }
+
+    @Test
+    fun `MandiRepository sellProduce success`() = testCoroutineRule.runBlockingTest {
+        whenever(mandiApi.sellProduce(any())).thenReturn("Yay! Sold your apples.")
+        val result = repository.sellProduce(Sell())
+        assertThat(result).isEqualTo("Yay! Sold your apples.")
+    }
+
+    @Test(expected = Exception::class)
+    fun `MandiRepository sellProduce failure`() = testCoroutineRule.runBlockingTest {
+        whenever(mandiApi.sellProduce(any())).thenThrow(Exception())
+        val result = repository.sellProduce(Sell())
     }
 
 }
