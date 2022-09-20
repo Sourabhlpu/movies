@@ -9,12 +9,15 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.view.isVisible
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import dagger.hilt.android.AndroidEntryPoint
 import sourabh.pal.mandi.databinding.ActivityMainBinding
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupActionBar() {
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
+        navController.addOnDestinationChangedListener(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -44,5 +48,14 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        binding.toolbar.isVisible = destination.id != R.id.success_fragment
+    }
+
 
 }
