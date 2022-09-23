@@ -9,7 +9,7 @@
 
     <fragment
         android:id="@+id/success_fragment"
-        android:name="sourabh.pal.mandi.sell.presentation.SuccessFragment"
+        android:name="sourabh.pal.movies.sell.presentation.SuccessFragment"
         android:label="@string/produce_sold"
         tools:layout="@layout/fragment_success">
         <argument
@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/sellAppleFragment"
-        android:name="sourabh.pal.mandi.sell.presentation.SellAppleFragment"
+        android:name="sourabh.pal.movies.sell.presentation.SellAppleFragment"
         android:label="@string/sell_apple_title" >
         <action
             android:id="@+id/action_sellProduce_to_SuccessFragment"
