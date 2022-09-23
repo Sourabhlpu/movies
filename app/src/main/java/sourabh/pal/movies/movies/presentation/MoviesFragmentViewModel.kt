@@ -7,8 +7,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import sourabh.pal.movies.common.domain.NetworkException
+import sourabh.pal.movies.common.domain.NetworkUnavailableException
+import sourabh.pal.movies.common.domain.NoMoreMoviesException
+import sourabh.pal.movies.common.domain.model.Movie
+import sourabh.pal.movies.common.domain.pagination.Pagination
+import sourabh.pal.movies.common.presentation.Event
 import sourabh.pal.movies.common.presentation.model.mappers.UiMovieMapper
 import sourabh.pal.movies.common.utils.DispatchersProvider
+import sourabh.pal.movies.common.utils.createExceptionHandler
 import sourabh.pal.movies.movies.domain.usecase.GetMovies
 import sourabh.pal.movies.movies.domain.usecase.RequestNextPageOfMovies
 import javax.inject.Inject
@@ -26,72 +33,68 @@ class MoviesFragmentViewModel @Inject constructor(
         const val UI_PAGE_SIZE = Pagination.DEFAULT_PAGE_SIZE
     }
 
-    val state: LiveData<AnimalsNearYouViewState> get() = _state
-    var isLoadingMoreAnimals: Boolean = false
+    val state: LiveData<MoviesViewState> get() = _state
+    var isLoadingMoreMovies: Boolean = false
     var isLastPage = false
 
-    private val _state = MutableLiveData<AnimalsNearYouViewState>()
+    private val _state = MutableLiveData<MoviesViewState>()
     private var currentPage = 0
 
     init {
-        _state.value = AnimalsNearYouViewState()
+        _state.value = MoviesViewState()
         subscribeToAnimalUpdates()
     }
 
-    fun onEvent(event: AnimalsNearYouEvent) {
+    fun onEvent(event: MoviesEvent) {
         when(event) {
-            is AnimalsNearYouEvent.RequestInitialAnimalsList -> loadAnimals()
-            is AnimalsNearYouEvent.RequestMoreAnimals -> loadNextAnimalPage()
+            is MoviesEvent.RequestInitialMovieList -> loadMovies()
+            is MoviesEvent.RequestMoreMovies -> loadNextMoviePage()
         }
     }
 
     private fun subscribeToAnimalUpdates() {
-        getMovies()
+/*        getMovies()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { onNewAnimalList(it) },
                 { onFailure(it) }
             )
-            .addTo(compositeDisposable)
+            .addTo(compositeDisposable)*/
     }
 
-    private fun onNewAnimalList(animals: List<Animal>) {
-        Logger.d("Got more animals!")
+    private fun onNewAnimalList(movies: List<Movie>) {
 
-        val animalsNearYou = animals.map { uiMovieMapper.mapToView(it) }
+        val moviesUI = movies.map { uiMovieMapper.mapToView(it) }
 
         // This ensures that new items are added below the already existing ones, thus avoiding
         // repositioning of items that are already visible, as it can provide for a confusing UX. A
         // nice alternative to this would be to add an "updatedAt" field to the Room entities, so
         // that we could actually order them by something that we completely control.
-        val currentList = state.value!!.animals
-        val newAnimals = animalsNearYou.subtract(currentList)
-        val updatedList = currentList + newAnimals
+        val currentList = state.value!!.movies
+        val newMovies = moviesUI.subtract(currentList.toSet())
+        val updatedList = currentList + newMovies
 
-        _state.value = state.value!!.copy( loading = false, animals = updatedList)
+        _state.value = state.value!!.copy( loading = false, movies = updatedList)
     }
 
-    private fun loadAnimals() {
-        if (state.value!!.animals.isEmpty()) {
-            loadNextAnimalPage()
+    private fun loadMovies() {
+        if (state.value!!.movies.isEmpty()) {
+            loadNextMoviePage()
         }
     }
 
-    private fun loadNextAnimalPage() {
-        isLoadingMoreAnimals = true
+    private fun loadNextMoviePage() {
+        isLoadingMoreMovies = true
 
         val errorMessage = "Failed to fetch nearby animals"
         val exceptionHandler = viewModelScope.createExceptionHandler(errorMessage) { onFailure(it) }
 
         viewModelScope.launch(exceptionHandler) {
             val pagination = withContext(dispatchersProvider.io()) {
-                Logger.d("Requesting more animals.")
-
                 requestNextPageOfMovies(++currentPage)
             }
-
             onPaginationInfoObtained(pagination)
-            isLoadingMoreAnimals = false
+            isLoadingMoreMovies = false
         }
     }
 
@@ -109,18 +112,14 @@ class MoviesFragmentViewModel @Inject constructor(
                     failure = Event(failure)
                 )
             }
-            is NoMoreAnimalsException -> {
+            is NoMoreMoviesException -> {
                 _state.value = state.value!!.copy(
-                    noMoreAnimalsNearby = true,
+                    noMoreMoviesNearby = true,
                     failure = Event(failure)
                 )
             }
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
-    }
 }
 

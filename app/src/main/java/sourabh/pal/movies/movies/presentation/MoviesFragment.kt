@@ -66,10 +66,10 @@ class MoviesFragment : Fragment() {
     ): RecyclerView.OnScrollListener {
         return object : InfiniteScrollListener(
             layoutManager,
-            AnimalsNearYouFragmentViewModel.UI_PAGE_SIZE
+            MoviesFragmentViewModel.UI_PAGE_SIZE
         ) {
             override fun loadMoreItems() { requestMoreAnimals() }
-            override fun isLoading(): Boolean = viewModel.isLoadingMoreAnimals
+            override fun isLoading(): Boolean = viewModel.isLoadingMoreMovies
             override fun isLastPage(): Boolean = viewModel.isLastPage
         }
     }
@@ -86,8 +86,8 @@ class MoviesFragment : Fragment() {
 
     private fun updateScreenState(state: MoviesViewState, adapter: MoviesAdapter) {
         binding.progressBar.isVisible = state.loading
-        adapter.submitList(state.animals)
-        handleNoMoreAnimalsNearby(state.noMoreAnimalsNearby)
+        adapter.submitList(state.movies)
+        handleNoMoreAnimalsNearby(state.noMoreMoviesNearby)
         handleFailures(state.failure)
     }
 
