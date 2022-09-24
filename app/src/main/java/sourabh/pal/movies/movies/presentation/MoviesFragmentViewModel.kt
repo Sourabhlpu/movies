@@ -1,10 +1,11 @@
 package sourabh.pal.movies.movies.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import sourabh.pal.movies.common.domain.NetworkException
@@ -33,15 +34,14 @@ class MoviesFragmentViewModel @Inject constructor(
         const val UI_PAGE_SIZE = Pagination.DEFAULT_PAGE_SIZE
     }
 
-    val state: LiveData<MoviesViewState> get() = _state
+    val state: StateFlow<MoviesViewState> get() = _state
     var isLoadingMoreMovies: Boolean = false
     var isLastPage = false
 
-    private val _state = MutableLiveData<MoviesViewState>()
+    private val _state = MutableStateFlow(MoviesViewState())
     private var currentPage = 0
 
     init {
-        _state.value = MoviesViewState()
         subscribeToAnimalUpdates()
     }
 
@@ -53,32 +53,25 @@ class MoviesFragmentViewModel @Inject constructor(
     }
 
     private fun subscribeToAnimalUpdates() {
-/*        getMovies()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { onNewAnimalList(it) },
-                { onFailure(it) }
-            )
-            .addTo(compositeDisposable)*/
+        viewModelScope.launch {
+            getMovies()
+                .catch { exception -> onFailure(exception) }
+                .collect{ movies -> onNewMoviesList(movies)
+            }
+        }
     }
 
-    private fun onNewAnimalList(movies: List<Movie>) {
-
+    private fun onNewMoviesList(movies: List<Movie>) {
         val moviesUI = movies.map { uiMovieMapper.mapToView(it) }
-
-        // This ensures that new items are added below the already existing ones, thus avoiding
-        // repositioning of items that are already visible, as it can provide for a confusing UX. A
-        // nice alternative to this would be to add an "updatedAt" field to the Room entities, so
-        // that we could actually order them by something that we completely control.
-        val currentList = state.value!!.movies
+        val currentList = state.value.movies
         val newMovies = moviesUI.subtract(currentList.toSet())
         val updatedList = currentList + newMovies
 
-        _state.value = state.value!!.copy( loading = false, movies = updatedList)
+        _state.value = state.value.copy( loading = false, movies = updatedList)
     }
 
     private fun loadMovies() {
-        if (state.value!!.movies.isEmpty()) {
+        if (state.value.movies.isEmpty()) {
             loadNextMoviePage()
         }
     }
@@ -91,7 +84,7 @@ class MoviesFragmentViewModel @Inject constructor(
 
         viewModelScope.launch(exceptionHandler) {
             val pagination = withContext(dispatchersProvider.io()) {
-                requestNextPageOfMovies(++currentPage)
+                requestNextPageOfMovies(searchQuery = "avengers", ++currentPage)
             }
             onPaginationInfoObtained(pagination)
             isLoadingMoreMovies = false
@@ -107,13 +100,14 @@ class MoviesFragmentViewModel @Inject constructor(
         when (failure) {
             is NetworkException,
             is NetworkUnavailableException -> {
-                _state.value = state.value!!.copy(
+                _state.value = state.value.copy(
                     loading = false,
                     failure = Event(failure)
                 )
             }
             is NoMoreMoviesException -> {
-                _state.value = state.value!!.copy(
+                _state.value = state.value.copy(
+                    loading = false,
                     noMoreMoviesNearby = true,
                     failure = Event(failure)
                 )

@@ -1,9 +1,12 @@
 package sourabh.pal.movies.common.data
 
+import kotlinx.coroutines.flow.Flow
 import sourabh.pal.movies.common.domain.NetworkException
+import sourabh.pal.movies.common.domain.model.Movie
 import sourabh.pal.movies.common.domain.model.Village
 import sourabh.pal.movies.common.domain.model.sell.Sell
 import sourabh.pal.movies.common.domain.model.seller.Seller
+import sourabh.pal.movies.common.domain.pagination.PaginatedMovies
 import sourabh.pal.movies.common.domain.repositories.MandiRepository
 import javax.inject.Inject
 
@@ -55,6 +58,26 @@ class FakeRepository @Inject constructor() : MandiRepository {
 
     override suspend fun sellProduce(sellApple: Sell): String {
         return if(isHappyPath) "Success" else "failure"
+    }
+
+    override fun getMovies(): Flow<List<Movie>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun storeMovies(movies: List<Movie>) {
+        TODO("Not yet implemented")
+    }
+
+    override fun searchCachedMoviesBy(searchParameters: String): Flow<List<Movie>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun searchMoviesRemotely(
+        pageToLoad: Int,
+        searchParameter: String,
+        numberOfItems: Int
+    ): PaginatedMovies {
+        TODO("Not yet implemented")
     }
 
 }

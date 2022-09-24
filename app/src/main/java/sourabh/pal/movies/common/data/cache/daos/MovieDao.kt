@@ -13,4 +13,7 @@ abstract class MovieDao {
     @Transaction
     @Query("""SELECT * FROM movies WHERE title LIKE '%' || :name || '%'""")
     abstract fun searchMovieByName(name: String): Flow<List<CachedMovie>>
+
+    @Query("SELECT * FROM movies")
+    abstract fun getAllMovies(): Flow<List<CachedMovie>>
 }

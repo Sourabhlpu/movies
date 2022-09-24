@@ -22,4 +22,5 @@
     <string name="format_success_message">Thank you %s for selling your quality produce.</string>
     <string name="format_message_ensure">Please ensure you received %1s for %2s Tonnes of your produce.</string>
     <string name="produce_sold">Produce Sold</string>
+    <string name="movies">Movies</string>
 </resources>

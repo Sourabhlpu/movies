@@ -7,10 +7,15 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import sourabh.pal.movies.R
 import sourabh.pal.movies.common.presentation.Event
 import sourabh.pal.movies.common.presentation.adapter.InfiniteScrollListener
@@ -79,8 +84,12 @@ class MoviesFragment : Fragment() {
     }
 
     private fun observeViewStateUpdates(adapter: MoviesAdapter) {
-        viewModel.state.observe(viewLifecycleOwner) {
-            updateScreenState(it, adapter)
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.state.collect{
+                    updateScreenState(it, adapter)
+                }
+            }
         }
     }
 

@@ -15,4 +15,8 @@ private val moviesDao: MovieDao
     override fun searchMovies(name: String): Flow<List<CachedMovie>> {
         return moviesDao.searchMovieByName(name)
     }
+
+    override fun getAllMovies(): Flow<List<CachedMovie>> {
+        return moviesDao.getAllMovies()
+    }
 }

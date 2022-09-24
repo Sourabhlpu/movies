@@ -6,6 +6,6 @@ import javax.inject.Inject
 
 class UiMovieMapper @Inject constructor(): UiMapper<Movie, UIMovie> {
     override fun mapToView(input: Movie): UIMovie {
-        return UIMovie("Lord of the Rings")
+        return UIMovie(title = input.title, year = input.year, poster = input.poster)
     }
 }

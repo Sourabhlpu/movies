@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/sellAppleFragment">
-
-
+    app:startDestination="@id/moviesFragment">
 
     <fragment
         android:id="@+id/success_fragment"
@@ -38,4 +36,9 @@
             android:id="@+id/action_sellProduce_to_SuccessFragment"
             app:destination="@id/success_fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/moviesFragment"
+        android:name="sourabh.pal.movies.movies.presentation.MoviesFragment"
+        android:label="@string/movies"
+        tools:layout="@layout/fragment_movies" />
 </navigation>

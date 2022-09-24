@@ -15,10 +15,11 @@ interface MandiApi {
     @POST(ApiConstants.SELL_PRODUCE)
     suspend fun sellProduce(produce: Sell): String
 
-    @GET
+    @GET(ApiConstants.BASE_ENDPOINT)
     suspend fun getMovies(
-        @Query(ApiParameters.MOVIE_NAME) query: String,
+        @Query(ApiParameters.SEARCH_QUERY) query: String,
         @Query(ApiParameters.MOVIE_TYPE) type: String,
-        @Query(ApiParameters.PAGE) page: String
+        @Query(ApiParameters.PAGE) page: Int,
+        @Query(ApiParameters.API_KEY) apiKey: String
     ) : ApiPaginatedMovies
 }

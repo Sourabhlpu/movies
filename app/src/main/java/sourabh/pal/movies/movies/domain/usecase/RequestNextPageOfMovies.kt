@@ -1,20 +1,23 @@
 package sourabh.pal.movies.movies.domain.usecase
 
+import sourabh.pal.movies.common.domain.NoMoreMoviesException
+import sourabh.pal.movies.common.domain.pagination.Pagination
 import sourabh.pal.movies.common.domain.repositories.MandiRepository
 import javax.inject.Inject
 
 class RequestNextPageOfMovies @Inject constructor(private val animalRepository: MandiRepository) {
   suspend operator fun invoke(
+      searchQuery: String,
       pageToLoad: Int,
       pageSize: Int = Pagination.DEFAULT_PAGE_SIZE
   ): Pagination {
-    val (animals, pagination) = animalRepository.requestMoreAnimals(pageToLoad, pageSize)
+    val (movies, pagination) = animalRepository.searchMoviesRemotely(pageToLoad, searchQuery, pageSize)
 
-    if (animals.isEmpty()) {
-      throw NoMoreAnimalsException("No animals nearby :(")
+    if (movies.isEmpty()) {
+      throw NoMoreMoviesException("No movies :(")
     }
 
-    animalRepository.storeAnimals(animals)
+    animalRepository.storeMovies(movies)
 
     return pagination
   }
