@@ -1,6 +1,6 @@
 package sourabh.pal.movies.common.data.api
 object ApiConstants {
-  const val BASE_ENDPOINT = "https://myMandi.herokuapp.com"
+  const val BASE_ENDPOINT = " http://www.omdbapi.com"
   const val AUTH_ENDPOINT = "token"
   const val SELLERS_ENDPOINT = "sellers"
   const val GET_VILLAGES = "villages"
@@ -9,4 +9,7 @@ object ApiConstants {
 
 object ApiParameters {
   const val NAME = "name"
+  const val MOVIE_NAME = "t"
+  const val MOVIE_TYPE = "type"
+  const val PAGE = "page"
 }
