@@ -3,8 +3,11 @@ package sourabh.pal.movies.common.utils
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
+import android.widget.ImageView
 import androidx.core.content.res.getDrawableOrThrow
+import androidx.databinding.BindingAdapter
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -47,4 +50,9 @@ fun Context.getProgressBarDrawable(): Drawable {
 
 fun Double.toKg(): Double{
     return this * 1016.04691
+}
+
+@BindingAdapter("imageUrl")
+fun ImageView.loadImageFromUrl(imageUrl: String?) {
+    Glide.with(this).load(imageUrl).into(this)
 }

@@ -10,7 +10,7 @@ data class Pagination(
     // from the remote source. Total pages should change with time, so we'll handle the value as
     // unknown before updating.
     const val UNKNOWN_TOTAL = -1
-    const val DEFAULT_PAGE_SIZE = 20
+    const val DEFAULT_PAGE_SIZE = 10
   }
 
   val canLoadMore: Boolean

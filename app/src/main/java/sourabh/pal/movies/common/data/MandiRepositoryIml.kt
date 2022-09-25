@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import sourabh.pal.movies.common.data.api.ApiConstants
 import sourabh.pal.movies.common.data.api.MandiApi
+import sourabh.pal.movies.common.data.api.model.ApiPaginatedMovies
 import sourabh.pal.movies.common.data.api.model.ApiSeller
 import sourabh.pal.movies.common.data.api.model.ApiVillage
 import sourabh.pal.movies.common.data.api.model.mappers.ApiMovieMapper
@@ -122,7 +123,7 @@ class MandiRepositoryIml @Inject constructor(
     ): PaginatedMovies {
         try{
             val apiResponse =  api.getMovies(searchParameter, "movie", pageToLoad, ApiConstants.API_KEY)
-            val pagination = Pagination(currentPage =  pageToLoad, totalPages = apiResponse.totalPages ?: 0 )
+            val pagination = getPagination(apiResponse, pageToLoad)
             if(!apiResponse.response.toBoolean()) throw NetworkException(apiResponse.error ?: "Unknown Error")
             return PaginatedMovies(
                 apiResponse.movies?.map { apiMovieMapper.mapToDomain(it) }.orEmpty(),
@@ -131,5 +132,14 @@ class MandiRepositoryIml @Inject constructor(
         }catch (exception: HttpException){
             throw NetworkException(exception.message ?: "Code ${exception.code()}")
         }
+    }
+
+    private fun getPagination(
+        apiResponse: ApiPaginatedMovies,
+        pageToLoad: Int
+    ): Pagination {
+        val totalItems = apiResponse.totalResults ?: 0
+        val totalPages = totalItems / 10 + if (totalItems % 10 == 0) 0 else 1
+        return Pagination(currentPage = pageToLoad, totalPages = totalPages)
     }
 }

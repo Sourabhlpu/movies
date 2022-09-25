@@ -1,5 +1,6 @@
 package sourabh.pal.movies.common.presentation.adapter
 
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -16,8 +17,13 @@ abstract class InfiniteScrollListener(
     val totalItemCount = layoutManager.itemCount
     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
+      Log.d("Scroll Listener", "isNotLoading = ${!isLoading()}  isNotLastPage =  ${!isLastPage()}")
     if (!isLoading() && !isLastPage()) {
-      if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+        Log.d("Scroll Listener", "areAllItemsVisible ${(visibleItemCount + firstVisibleItemPosition) >= totalItemCount}")
+        Log.d("Scroll Listener", "Second Condition? ${ firstVisibleItemPosition >= 0}")
+        Log.d("Scroll Listener", "third Condition? ${ totalItemCount >= pageSize }")
+
+        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
           && firstVisibleItemPosition >= 0
           && totalItemCount >= pageSize
       ) {
