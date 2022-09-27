@@ -97,7 +97,7 @@ class MoviesFragmentViewModel @Inject constructor(
     private fun loadNextMoviePage() {
         isLoadingMoreMovies = true
 
-        val errorMessage = "Failed to fetch nearby animals"
+        val errorMessage = "Failed to fetch movies"
         val exceptionHandler = viewModelScope.createExceptionHandler(errorMessage) { onFailure(it) }
 
         viewModelScope.launch(exceptionHandler) {

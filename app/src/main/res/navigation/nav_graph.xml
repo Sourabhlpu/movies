@@ -4,38 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/moviesFragment">
-
-    <fragment
-        android:id="@+id/success_fragment"
-        android:name="sourabh.pal.movies.sell.presentation.SuccessFragment"
-        android:label="@string/produce_sold"
-        tools:layout="@layout/fragment_success">
-        <argument
-            android:name="sellerName"
-            app:argType="string"
-            />
-        <argument
-            android:name="totalPrice"
-            app:argType="string"/>
-        <argument
-            android:name="totalWeight"
-            app:argType="string"/>
-        <action
-            android:id="@+id/action_SuccessFragment_to_SellAppleFragment"
-            app:popUpTo="@id/sellAppleFragment"
-            app:destination="@id/sellAppleFragment"
-            app:popUpToSaveState="true"
-            app:popUpToInclusive="true"
-            />
-    </fragment>
-    <fragment
-        android:id="@+id/sellAppleFragment"
-        android:name="sourabh.pal.movies.sell.presentation.SellAppleFragment"
-        android:label="@string/sell_apple_title" >
-        <action
-            android:id="@+id/action_sellProduce_to_SuccessFragment"
-            app:destination="@id/success_fragment" />
-    </fragment>
     <fragment
         android:id="@+id/moviesFragment"
         android:name="sourabh.pal.movies.movies.presentation.MoviesFragment"

@@ -39,7 +39,7 @@ class MoviesFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMoviesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -50,6 +50,10 @@ class MoviesFragment : Fragment() {
         setupUI()
         requestInitialMoviesList()
         prepareForSearch()
+    }
+
+    private fun requestInitialMoviesList() {
+        viewModel.onEvent(MoviesEvent.RequestInitialMovieList)
     }
 
     private fun prepareForSearch() {
@@ -101,7 +105,7 @@ class MoviesFragment : Fragment() {
             MoviesFragmentViewModel.UI_PAGE_SIZE
         ) {
             override fun loadMoreItems() {
-                requestMoreAnimals()
+                requestMoreMovies()
             }
 
             override fun isLoading(): Boolean = viewModel.isLoadingMoreMovies
@@ -109,7 +113,7 @@ class MoviesFragment : Fragment() {
         }
     }
 
-    private fun requestMoreAnimals() {
+    private fun requestMoreMovies() {
         viewModel.onEvent(MoviesEvent.RequestMoreMovies)
     }
 
@@ -136,7 +140,6 @@ class MoviesFragment : Fragment() {
         adapter.submitList(searchResults)
         updateRemoteSearchViews(searchingRemotely)
         updateNoResultsViews(noResultState)
-        handleNoMoreAnimalsNearby(noMoreMovies)
         handleFailures(failure)
     }
 
@@ -155,10 +158,6 @@ class MoviesFragment : Fragment() {
         binding.initialSearchText.isVisible = inInitialState
     }
 
-    private fun handleNoMoreAnimalsNearby(noMovies: Boolean) {
-        // Show a warning message and a prompt for the user to try a different movie
-    }
-
     private fun handleFailures(failure: Event<Throwable>?) {
         val unhandledFailure = failure?.getContentIfNotHandled() ?: return
 
@@ -172,10 +171,6 @@ class MoviesFragment : Fragment() {
         if (snackbarMessage.isNotEmpty()) {
             Snackbar.make(requireView(), snackbarMessage, Snackbar.LENGTH_SHORT).show()
         }
-    }
-
-    private fun requestInitialMoviesList() {
-        viewModel.onEvent(MoviesEvent.RequestInitialMovieList)
     }
 
     override fun onDestroyView() {

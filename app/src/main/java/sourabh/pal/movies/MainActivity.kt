@@ -15,7 +15,7 @@ import sourabh.pal.movies.databinding.ActivityMainBinding
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     private fun setupActionBar() {
         setSupportActionBar(binding.toolbar)
         setupActionBarWithNavController(navController, appBarConfiguration)
-        navController.addOnDestinationChangedListener(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -46,14 +45,5 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-
-    override fun onDestinationChanged(
-        controller: NavController,
-        destination: NavDestination,
-        arguments: Bundle?
-    ) {
-        binding.toolbar.isVisible = destination.id != R.id.success_fragment
-    }
-
 
 }
