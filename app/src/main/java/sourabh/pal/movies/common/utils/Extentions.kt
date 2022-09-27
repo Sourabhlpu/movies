@@ -4,12 +4,15 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.widget.ImageView
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.res.getDrawableOrThrow
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import sourabh.pal.movies.R
 
@@ -55,4 +58,23 @@ fun Double.toKg(): Double{
 @BindingAdapter("imageUrl")
 fun ImageView.loadImageFromUrl(imageUrl: String?) {
     Glide.with(this).load(imageUrl).into(this)
+}
+
+fun SearchView.getQueryTextChangeStateFlow(): StateFlow<String> {
+
+    val query = MutableStateFlow("")
+
+    setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String): Boolean {
+            query.value = newText
+            return true
+        }
+    })
+
+    return query
+
 }

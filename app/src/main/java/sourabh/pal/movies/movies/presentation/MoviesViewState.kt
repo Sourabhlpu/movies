@@ -4,8 +4,10 @@ import sourabh.pal.movies.common.presentation.Event
 import sourabh.pal.movies.common.presentation.model.UIMovie
 
 data class MoviesViewState(
-    val loading: Boolean = true,
+    val noSearchQuery: Boolean = true,
     val movies: List<UIMovie> = emptyList(),
-    val noMoreMoviesNearby: Boolean = false,
+    val searchingRemotely: Boolean = false,
+    val noRemoteResults: Boolean = false,
+    val noMoreMovies: Boolean = false,
     val failure: Event<Throwable>? = null
 )

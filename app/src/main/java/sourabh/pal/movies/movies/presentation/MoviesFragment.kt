@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import sourabh.pal.movies.R
 import sourabh.pal.movies.common.presentation.Event
@@ -35,7 +35,11 @@ class MoviesFragment : Fragment() {
 
     private var _binding: FragmentMoviesBinding? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentMoviesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -45,6 +49,29 @@ class MoviesFragment : Fragment() {
 
         setupUI()
         requestInitialMoviesList()
+        prepareForSearch()
+    }
+
+    private fun prepareForSearch() {
+        setupSearchViewListener()
+    }
+
+    private fun setupSearchViewListener() {
+        val searchView = binding.search
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    viewModel.onEvent(MoviesEvent.QueryInput(query.orEmpty()))
+                    searchView.clearFocus()
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.onEvent(MoviesEvent.QueryInput(newText.orEmpty()))
+                    return true
+                }
+            }
+        )
     }
 
     private fun setupUI() {
@@ -73,7 +100,10 @@ class MoviesFragment : Fragment() {
             layoutManager,
             MoviesFragmentViewModel.UI_PAGE_SIZE
         ) {
-            override fun loadMoreItems() { requestMoreAnimals() }
+            override fun loadMoreItems() {
+                requestMoreAnimals()
+            }
+
             override fun isLoading(): Boolean = viewModel.isLoadingMoreMovies
             override fun isLastPage(): Boolean = viewModel.isLastPage
         }
@@ -84,9 +114,9 @@ class MoviesFragment : Fragment() {
     }
 
     private fun observeViewStateUpdates(adapter: MoviesAdapter) {
-        lifecycleScope.launch{
-            repeatOnLifecycle(Lifecycle.State.STARTED){
-                viewModel.state.collect{
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect {
                     updateScreenState(it, adapter)
                 }
             }
@@ -94,15 +124,39 @@ class MoviesFragment : Fragment() {
     }
 
     private fun updateScreenState(state: MoviesViewState, adapter: MoviesAdapter) {
-        binding.progressBar.isVisible = state.loading
-        adapter.submitList(state.movies)
-        handleNoMoreAnimalsNearby(state.noMoreMoviesNearby)
-        handleFailures(state.failure)
+        val (
+            inInitialState,
+            searchResults,
+            searchingRemotely,
+            noResultState,
+            noMoreMovies,
+            failure) = state
+
+        updateInitialStateViews(inInitialState)
+        adapter.submitList(searchResults)
+        updateRemoteSearchViews(searchingRemotely)
+        updateNoResultsViews(noResultState)
+        handleNoMoreAnimalsNearby(noMoreMovies)
+        handleFailures(failure)
     }
 
-    private fun handleNoMoreAnimalsNearby(noMoreAnimalsNearby: Boolean) {
-        // Show a warning message and a prompt for the user to try a different
-        // distance or postcode
+    private fun updateNoResultsViews(noResultsState: Boolean) {
+        binding.noSearchResultsImageView.isVisible = noResultsState
+        binding.noSearchResultsText.isVisible = noResultsState
+    }
+
+    private fun updateRemoteSearchViews(searchingRemotely: Boolean) {
+        binding.progressBar.isVisible = searchingRemotely
+        binding.searchRemotelyText.isVisible = searchingRemotely
+    }
+
+    private fun updateInitialStateViews(inInitialState: Boolean) {
+        binding.initialSearchImageView.isVisible = inInitialState
+        binding.initialSearchText.isVisible = inInitialState
+    }
+
+    private fun handleNoMoreAnimalsNearby(noMovies: Boolean) {
+        // Show a warning message and a prompt for the user to try a different movie
     }
 
     private fun handleFailures(failure: Event<Throwable>?) {
@@ -112,9 +166,9 @@ class MoviesFragment : Fragment() {
 
         val snackbarMessage = if (unhandledFailure.message.isNullOrEmpty()) {
             fallbackMessage
+        } else {
+            unhandledFailure.message!!
         }
-        else {
-            unhandledFailure.message!! }
         if (snackbarMessage.isNotEmpty()) {
             Snackbar.make(requireView(), snackbarMessage, Snackbar.LENGTH_SHORT).show()
         }

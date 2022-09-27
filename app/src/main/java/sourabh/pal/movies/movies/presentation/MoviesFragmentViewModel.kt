@@ -3,9 +3,7 @@ package sourabh.pal.movies.movies.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import sourabh.pal.movies.common.domain.NetworkException
@@ -17,18 +15,18 @@ import sourabh.pal.movies.common.presentation.Event
 import sourabh.pal.movies.common.presentation.model.mappers.UiMovieMapper
 import sourabh.pal.movies.common.utils.DispatchersProvider
 import sourabh.pal.movies.common.utils.createExceptionHandler
-import sourabh.pal.movies.movies.domain.usecase.GetMovies
 import sourabh.pal.movies.movies.domain.usecase.RequestNextPageOfMovies
+import sourabh.pal.movies.movies.domain.usecase.SearchMoviesLocally
 import javax.inject.Inject
 
 
 @HiltViewModel
 class MoviesFragmentViewModel @Inject constructor(
-    private val getMovies: GetMovies,
+    private val searchMoviesLocally: SearchMoviesLocally,
     private val requestNextPageOfMovies: RequestNextPageOfMovies,
     private val uiMovieMapper: UiMovieMapper,
     private val dispatchersProvider: DispatchersProvider
-): ViewModel() {
+) : ViewModel() {
 
     companion object {
         const val UI_PAGE_SIZE = Pagination.DEFAULT_PAGE_SIZE
@@ -41,23 +39,43 @@ class MoviesFragmentViewModel @Inject constructor(
     private val _state = MutableStateFlow(MoviesViewState())
     private var currentPage = 0
 
+    private val _queryStateFlow: MutableStateFlow<String> = MutableStateFlow("")
+
     init {
-        subscribeToAnimalUpdates()
+        subscribeToMovieUpdates()
     }
 
     fun onEvent(event: MoviesEvent) {
-        when(event) {
+        when (event) {
             is MoviesEvent.RequestInitialMovieList -> loadMovies()
             is MoviesEvent.RequestMoreMovies -> loadNextMoviePage()
+            is MoviesEvent.QueryInput -> updateQuery(event.query)
         }
     }
 
-    private fun subscribeToAnimalUpdates() {
+    private fun updateQuery(query: String) {
+        resetPagination()
+        if(query.isEmpty())
+            updateToEmptyQuery()
+        else{
+            _queryStateFlow.value = query
+        }
+    }
+
+    private fun updateToEmptyQuery() {
+        _state.value = state.value.copy(searchingRemotely = false, movies = emptyList(), noSearchQuery = true)
+    }
+
+    private fun subscribeToMovieUpdates() {
         viewModelScope.launch {
-            getMovies()
+            searchMoviesLocally(_queryStateFlow)
                 .catch { exception -> onFailure(exception) }
-                .collect{ movies -> onNewMoviesList(movies)
-            }
+                .collect { movies ->
+                    if(movies.isEmpty())
+                        loadNextMoviePage()
+                    else
+                    onNewMoviesList(movies)
+                }
         }
     }
 
@@ -67,11 +85,11 @@ class MoviesFragmentViewModel @Inject constructor(
         val newMovies = moviesUI.subtract(currentList.toSet())
         val updatedList = currentList + newMovies
 
-        _state.value = state.value.copy( loading = false, movies = updatedList)
+        _state.value = state.value.copy(searchingRemotely = false, movies = updatedList, noSearchQuery = false)
     }
 
     private fun loadMovies() {
-        if (state.value.movies.isEmpty()) {
+        if (state.value.movies.isEmpty() && _queryStateFlow.value.isNotEmpty()) {
             loadNextMoviePage()
         }
     }
@@ -84,7 +102,7 @@ class MoviesFragmentViewModel @Inject constructor(
 
         viewModelScope.launch(exceptionHandler) {
             val pagination = withContext(dispatchersProvider.io()) {
-                requestNextPageOfMovies(searchQuery = "avengers", ++currentPage)
+                requestNextPageOfMovies(searchQuery = _queryStateFlow.value, ++currentPage)
             }
             onPaginationInfoObtained(pagination)
             isLoadingMoreMovies = false
@@ -96,19 +114,27 @@ class MoviesFragmentViewModel @Inject constructor(
         isLastPage = !pagination.canLoadMore
     }
 
+    private fun resetPagination() {
+        currentPage = 0
+        _state.value = state.value.copy(
+            movies = emptyList(),
+            searchingRemotely = true
+        )
+    }
+
     private fun onFailure(failure: Throwable) {
         when (failure) {
             is NetworkException,
             is NetworkUnavailableException -> {
                 _state.value = state.value.copy(
-                    loading = false,
+                    searchingRemotely = false,
                     failure = Event(failure)
                 )
             }
             is NoMoreMoviesException -> {
                 _state.value = state.value.copy(
-                    loading = false,
-                    noMoreMoviesNearby = true,
+                    searchingRemotely = false,
+                    noMoreMovies = true,
                     failure = Event(failure)
                 )
             }
