@@ -1,6 +1,6 @@
-# Mandi
+# Movies
 
-Android app to sell you apples.
+Android app to search for movies.
 
 ## Installation
 
@@ -9,4 +9,4 @@ Clone the project into Android Studio and then run it on device or emulator.
 
 ## Usage
 
-1. Only sellers that are selected from the dropdown can be registered ones. By default sellers are un-registered.
+1. Search for any movie that you want to look for.
